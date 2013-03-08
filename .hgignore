@@ -3,6 +3,8 @@ syntax:glob
 *.egg-info
 *.pot
 *.py[co]
-django_site.egg-info
+north.egg-info
 docs/dl
 .build
+htmlcov
+.coverage

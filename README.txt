@@ -1,6 +1,10 @@
-====================================================
-``north`` -- another way to migrate Django databases
-====================================================
+==========================
+django-north README
+==========================
+Another way to migrate Django databases
+
+Description
+-----------
 
 `north` is a Python code serializer/deserializer for Django which lets 
 you write intelligent fixtures and generate database dumps. 
@@ -13,9 +17,9 @@ database content.
 It doesn't require any database model, it is not even a Django app. 
 Basic usage in your :xfile:`settings.py` file is::
 
-      from north import Site
-      SITE = Site(__file__,globals(),'myapp1','myapp2',...)
-      # your settings here
+  from north import Site
+  SITE = Site(__file__,globals(),'myapp1','myapp2',...)
+  # your settings here
       
 See the `Usage <http://site.lino-framework.org/usage.html>` page
 for `django-site` which applies entirely for a `north` site.
@@ -29,5 +33,4 @@ Instantiating a `north.Site` will install sensible default values
 for certain Django settings, including `INSTALLED_APPS` and 
 `SERIALIZATION_MODULES`.
 
-More on http://north.lino-framework.org
-
+Read more on http://north.lino-framework.org

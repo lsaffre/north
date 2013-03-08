@@ -13,20 +13,19 @@
 
 import sys, os
 from unipath import Path
+DOCSDIR = Path(__file__).parent.absolute()
+sys.path.append(DOCSDIR)
 
 import north
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
+#~ os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 """
 Trigger loading of Djangos model cache in order to avoid side effects that 
 would occur when this happens later while importing one of the models modules.
 """
 from django.conf import settings
 
-DOCSDIR = Path(__file__).parent.absolute()
-HGWORK = DOCSDIR.ancestor(2)
-
-sys.path.append(DOCSDIR)
 
 
 # General configuration
@@ -42,7 +41,7 @@ extensions = [
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
   'sphinx.ext.intersphinx',
-  #~ 'sphinx.ext.doctest',
+  'sphinx.ext.doctest',
 ]
 
 
@@ -245,16 +244,20 @@ extlinks = {
 #~ }
 
 
+HGWORK = DOCSDIR.ancestor(2)
 intersphinx_mapping = dict()
 intersphinx_mapping.update(site=(
-    'http://www.lino-framework.org',
-    Path(HGWORK,'site','docs','.build','html','objects.inv')))
+    'http://site.lino-framework.org',
+    Path(HGWORK,'site','docs','.build','objects.inv')))
+intersphinx_mapping.update(north=(
+    'http://north.lino-framework.org',
+    Path(HGWORK,'north','docs','.build','objects.inv')))
 intersphinx_mapping.update(lino=(
     'http://www.lino-framework.org',
-    Path(HGWORK,'lino','docs','.build','html','objects.inv')))
+    Path(HGWORK,'lino','docs','.build','objects.inv')))
 intersphinx_mapping.update(welfare=(
     'http://welfare.lino-framework.org',
-    Path(HGWORK,'welfare','docs','.build','html','objects.inv')))
+    Path(HGWORK,'welfare','docs','.build','objects.inv')))
 
 autosummary_generate = True
 
