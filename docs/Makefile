@@ -1,8 +1,9 @@
 DJANGO_ADMIN=python $(shell python -c "from os.path import join,dirname; from django import bin;print join(dirname(bin.__file__),'django-admin.py')")
 DJANGO_ADMIN := $(shell cygpath -m $(DJANGO_ADMIN))
 SITENAME               = north
-TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
 #~ TEMPDIR                = /cygdrive/c/temp/sphinxbuild/$(SITENAME)
+#~ TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
+TEMPDIR                = .build
 BUILDDIR               = $(TEMPDIR)\\html
 CACHEDIR               = $(TEMPDIR)\\doctrees
 #~ AUTODOC                = python l:\\snapshots\\sphinx-autopackage-script\\generate_modules.py

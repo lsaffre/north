@@ -245,8 +245,8 @@ def contribute_to_class(field,cls,fieldclass,**kw):
     for lang in BABEL_LANGS:
         kw.update(verbose_name=string_concat(field.verbose_name,' ('+lang+')'))
         newfield = fieldclass(**kw)
-        #~ newfield._lino_babel_field = True # used by modeltools.get_data_elems
-        newfield._lino_babel_field = field.name # used by modeltools.get_data_elems
+        #~ newfield._lino_babel_field = True 
+        newfield._lino_babel_field = field.name # used by dbtools.get_data_elems
         cls.add_to_class(field.name + '_' + lang,newfield)
 
 class BabelCharField(models.CharField):
@@ -265,7 +265,7 @@ class BabelCharField(models.CharField):
         #~ for lang in BABEL_LANGS:
             #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
             #~ newfield = models.CharField(**kw)
-            #~ newfield._lino_babel_field = True # used by modeltools.get_data_elems
+            #~ newfield._lino_babel_field = True # used by dbtools.get_data_elems
             #~ cls.add_to_class(self.name + '_' + lang,newfield)
             
 
@@ -287,7 +287,7 @@ class BabelTextField(models.TextField):
             #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
             #~ # newfield = models.TextField(**kw)
             #~ newfield = fields.RichTextField(**kw)
-            #~ newfield._lino_babel_field = True # used by modeltools.get_data_elems
+            #~ newfield._lino_babel_field = True # used by dbtools.get_data_elems
             #~ cls.add_to_class(self.name + '_' + lang,newfield)
 
 

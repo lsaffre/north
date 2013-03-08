@@ -1,56 +1,25 @@
 """
-``north`` -- another way to migrate Django databases.
-
-A Python code serializer/deserializer for Django 
-which lets you write intelligent fixtures and generate database dumps. 
-Includes an optional single-table solution for handling multilingual database content. 
-Last but not least you can use it to provide automated database migrations
-using a completely different approach than `South <http://south.aeracode.org/>`__
-
-It doesn't provide any Model, it is not even a Django app.
-Basic usage in your :xfile:`settings.py` file is similar 
-to that of `django-site <http://site.lino-framework.org>`__::
-
-      from north import Site
-      SITE = Site(__file__,globals())
-      INSTALLED_APPS = [... "django_site"]
-
-It works by adding a new serialization format "py" 
-which you can specify 
-using the `--format` option of Django's `dump` command::
-
-  manage.py dump --format py
-
-Instantiating a :class:`north.Site <Site>` 
-will set Django's :setting:`SERIALIZATION_MODULES` setting to::
-
-  SERIALIZATION_MODULES = { "py" : "north.dpy" }
-  
-If you happen to define your own local serialization modules,
-don't forget to also include the :mod:`north.dpy` module.
-
 
 """
 
 import os
 
-execfile(os.path.join(os.path.dirname(__file__),'version.py'))
+from djangosite import Site
 
-__author__ = "Luc Saffre <luc.saffre@gmx.net>"
+#~ execfile(os.path.join(os.path.dirname(__file__),'version.py'))
+execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
+__version__ = SETUP_INFO['version'] # 
+
+
+#~ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
 #~ __url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
-__url__ = "http://north.lino-framework.org"
+#~ __url__ = "http://north.lino-framework.org"
 
 
-__copyright__ = """\
-Copyright (c) 2002-2013 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information."""
+#~ __copyright__ = "Copyright (c) 2002-2013 Luc Saffre."
 
-
-from django_site import Site
 
 gettext = lambda s: s
 
@@ -74,8 +43,8 @@ def language_choices(*args):
 
 class Site(Site):
     """
-    Extends the standard :class:`django_site.Site`.
-    adding some attributes and methods used by `north`.
+    Extends :class:`djangosite.Site`
+    by adding some attributes and methods used by `north`.
     """
     
     languages = None
@@ -85,7 +54,7 @@ class Site(Site):
     """
     The language distribution used in this database.
     
-    This must be either `None` or an iterable of 2-letter codes.
+    This must be either `None` or an iterable of language codes.
     Examples::
     
       languages = "en de fr nl et".split()
@@ -94,13 +63,20 @@ class Site(Site):
     The first language in this list will be the site's 
     default language.
     
-    Changing this setting might affect your database structure 
-    and thus require a data migration
-    if your application uses babel fields.    
+    Changing this setting affects your database structure 
+    if your application uses babel fields,
+    and thus require a data migration.
     
     ? Lino will use this setting to set the Django 
     ? settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.
     
+    """
+    
+    demo_fixtures = ['std','demo']
+    """
+    The list of fixtures to be loaded by the 
+    `initdb_demo <lino.management.commands.initdb_demo>`
+    command.
     """
     
     migration_module = None
@@ -120,16 +96,17 @@ class Site(Site):
     See also :doc:`/blog/2011/0901`.
     """
     
-    def __init__(self,project_file,django_settings):
-        super(Site,self).__init__(project_file,django_settings)
-        django_settings.update(SERIALIZATION_MODULES = {
+    #~ def __init__(self,*args):
+    def init_nolocal(self,*args):
+        super(Site,self).init_nolocal(*args)
+        self.update_settings(SERIALIZATION_MODULES = {
             "py" : "north.dpy",
         })
         
         if self.languages is not None:
             lc = language_choices(*self.languages)
-            django_settings.update(LANGUAGES = lc)
-            django_settings.update(LANGUAGE_CODE = lc[0][0])
+            self.update_settings(LANGUAGES = lc)
+            self.update_settings(LANGUAGE_CODE = lc[0][0])
         
         
         
@@ -143,6 +120,11 @@ class Site(Site):
           
     def using(self,ui=None):
         for u in super(Site,self).using(ui): yield u
-          
-        yield ("django-north",__version__,"http://north.lino-framework.org")
+        yield (SETUP_INFO['name'],SETUP_INFO['version'],SETUP_INFO['url'])
         
+
+#~ class Site(BaseSite):
+    
+    #~ def __init__(self,*args,**kwargs):
+        #~ super(Site,self).__init__(*args)
+        #~ self.run_djangosite_local(**kwargs)

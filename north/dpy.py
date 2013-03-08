@@ -36,7 +36,7 @@ from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 from django.utils.importlib import import_module
 
-from django_site.modeltools import obj2str, sorted_models_list, full_model_name
+from djangosite.dbutils import obj2str, sorted_models_list, full_model_name
 from north import babel
 
 SUFFIX = '.py'

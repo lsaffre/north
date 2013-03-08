@@ -12,20 +12,22 @@
 # serve to show the default.
 
 import sys, os
+from unipath import Path
+
 import north
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.sphinxdocs.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
 """
 Trigger loading of Djangos model cache in order to avoid side effects that 
 would occur when this happens later while importing one of the models modules.
 """
 from django.conf import settings
 
+DOCSDIR = Path(__file__).parent.absolute()
+HGWORK = DOCSDIR.ancestor(2)
 
-# If your extensions are in another directory, add it here. If the directory
-# is relative to the documentation root, use os.path.abspath to make it
-# absolute, like shown here.
-#sys.path.append(os.path.abspath('.'))
+sys.path.append(DOCSDIR)
+
 
 # General configuration
 # ---------------------
@@ -59,7 +61,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u"django-site"
+project = u"north"
 copyright = u'2002-2013, Luc Saffre'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -124,7 +126,7 @@ html_style = 'default.css'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = u"django-north"
+html_title = u"north"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -230,12 +232,6 @@ htmlhelp_basename = 'north'
 #~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg" 
 #~ from timtools.sphinx import setup
 
-from lino.utils.sphinxconf import setup
-#~ from lino.utils.sphinx import setup as stdsetup
-#~ def setup(app):
-    #~ stdsetup(app)
-    #~ app.add_stylesheet('dialog.css')
-    #~ app.add_stylesheet('scrollwide.css')
 
 extlinks = {
   #~ 'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
@@ -248,16 +244,17 @@ extlinks = {
   #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
 #~ }
 
-#~ welfare_inv = os.path.join('..','..','welfare','objects.inv')
-intersphinx_mapping = {
-  #~ 'welfare': ('http://packages.python.org/lino-welfare/en', None )
-  'lino': (
+
+intersphinx_mapping = dict()
+intersphinx_mapping.update(site=(
     'http://www.lino-framework.org',
-    r'c:\temp\sphinxbuild\lino\html\objects.inv' ),
-  'welfare': (
+    Path(HGWORK,'site','docs','.build','html','objects.inv')))
+intersphinx_mapping.update(lino=(
+    'http://www.lino-framework.org',
+    Path(HGWORK,'lino','docs','.build','html','objects.inv')))
+intersphinx_mapping.update(welfare=(
     'http://welfare.lino-framework.org',
-    r'c:\temp\sphinxbuild\welfare\html\objects.inv' )
-}
+    Path(HGWORK,'welfare','docs','.build','html','objects.inv')))
 
 autosummary_generate = True
 
@@ -271,3 +268,10 @@ todo_include_todos = True
 
 #~ New in version 1.1
 gettext_compact = True
+
+from djangosite.utils.sphinxconf import setup
+#~ from lino.utils.sphinx import setup as stdsetup
+#~ def setup(app):
+    #~ stdsetup(app)
+    #~ app.add_stylesheet('dialog.css')
+    #~ app.add_stylesheet('scrollwide.css')

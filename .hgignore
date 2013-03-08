@@ -5,3 +5,4 @@ syntax:glob
 *.py[co]
 django_site.egg-info
 docs/dl
+.build
