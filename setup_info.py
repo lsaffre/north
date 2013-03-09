@@ -15,7 +15,7 @@ North includes an optional single-table solution for handling multilingual
 database content.
 
 North doesn't require any database model, it is not even a Django app. 
-Basic usage in your :xfile:`settings.py` file is::
+Basic usage in your `settings.py` file is::
 
   from north import Site
   SITE = Site(__file__,globals(),'myapp1','myapp2',...)
