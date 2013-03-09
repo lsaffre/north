@@ -26,6 +26,7 @@ class Cycler:
     Turns a list of items into an endless loop.
     Useful when generating demo fixtures.
     
+    >>> from north.utils import Cycler
     >>> def myfunc():
     ...     yield "a"
     ...     yield "b"
