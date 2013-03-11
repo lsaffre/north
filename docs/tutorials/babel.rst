@@ -26,8 +26,7 @@ setting of a given Site instance.
 Now we install some demo data:
 
 >>> # -*- coding: utf-8 -*-
->>> from django.conf import settings
->>> settings.SITE.call_command('initdb','demo',interactive=False)
+>>> call_command('initdb','demo',interactive=False)
 Creating tables ...
 Creating table catalog_product
 Installing custom SQL ...

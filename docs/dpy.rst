@@ -1,3 +1,5 @@
+.. _dpy:
+
 ===============
 Python fixtures
 ===============
@@ -63,3 +65,12 @@ Models that get special handling in :mod:`lino.utils.dumpy`:
 - `Site` and `Permission` objects *must* be stored and *must not* be re-created
 - `Session` objects can get lost in a dump and are not stored.
 
+
+External links
+---------------
+
+- limodou published a Djangosnippet in 2007 which does something similar:
+  `db_dump.py - for dumpping and loading data from database
+  <http://djangosnippets.org/snippets/14/>`_
+  (TODO: compare them)
+  
