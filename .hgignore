@@ -8,3 +8,5 @@ docs/dl
 .build
 htmlcov
 .coverage
+docs/api
+tmp

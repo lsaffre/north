@@ -12,10 +12,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Generic support for :doc:`/topics/babel`.
+Generic support for :ref:`mldbc`.
 
 This includes definition of *babel fields* in your Django Models 
-as well as methods to access these fields transparently.
+as well as methods to access these fields.
 
 Babel fields are fields defined using 
 :class:`BabelCharField`
@@ -56,25 +56,54 @@ LANGUAGE_CODE_MAX_LENGTH = 2
 """
 """
 
-DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:LANGUAGE_CODE_MAX_LENGTH].strip()
-"""
-The 2 first chars of :setting:`LANGUAGE_CODE`.
-"""
+def simplified_code(code):
+    """
+    We store only the main code, supposing that nobody maintains
+    multilingual database content for different variants of the 
+    same language.
+    """
+    return code[:LANGUAGE_CODE_MAX_LENGTH].strip()
+
+#~ DEFAULT_LANGUAGE = simplified_code(settings.LANGUAGE_CODE)
 
 def langtext(code):
     for k,v in settings.LANGUAGES:
         if k == code: return v
-    return "English"
+    raise Exception(
+        "Unknown language code %r (must be one of %s)" % (
+        code,[x[0] for x in settings.LANGUAGES]))
+    #~ return "English"
 
+LANGUAGE_CHOICES = []
+LANGUAGE_DICT = dict() # used in lino.modlib.users
+
+def _add_language(code,text,full_code):
+    LANGUAGE_DICT[code] = text
+    LANGUAGE_CHOICES.append( (code,text) )
+
+#~ _add_language(DEFAULT_LANGUAGE,_(langtext(settings.LANGUAGE_CODE)))
+   
 if settings.SITE.languages is None:
   
-    LANGUAGE_CHOICES = [ (DEFAULT_LANGUAGE,_(langtext(DEFAULT_LANGUAGE))) ]
+    _add_language('en',_("English"),'en-us')
+    DEFAULT_LANGUAGE = 'en'
     
 else:
+  
+    for code in settings.SITE.languages:
+        text = _(langtext(code))
+        k = simplified_code(code)
+        if k in LANGUAGE_DICT:
+            raise Exception("Duplicate base language %r" % k)
+        _add_language(k,text,code)
+        
+    DEFAULT_LANGUAGE = LANGUAGE_CHOICES[0][0]
 
-    LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES if k in settings.SITE.languages]
+            
+    #~ LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES 
+          #~ if k in settings.SITE.languages]
 
-    assert DEFAULT_LANGUAGE in [x[0] for x in settings.LANGUAGES]
+assert DEFAULT_LANGUAGE in [x[0] for x in settings.LANGUAGES]
   
 BABEL_LANGS = [x[0] for x in LANGUAGE_CHOICES if x[0] != DEFAULT_LANGUAGE]
 #~ BABEL_LANGS = [x[0] for x in settings.LANGUAGES if x[0] != DEFAULT_LANGUAGE]
@@ -83,13 +112,7 @@ AVAILABLE_LANGUAGES = tuple([DEFAULT_LANGUAGE] + BABEL_LANGS)
 
 BABEL_LANGS = tuple(BABEL_LANGS)
 
-LANGUAGE_DICT = dict() # used in lino.modlib.users
-for k,v in LANGUAGE_CHOICES:
-    LANGUAGE_DICT[k] = v
-    
-
-
-#~ logger.info("Languages: %s ",AVAILABLE_LANGUAGES)
+#~ logger.info("20130311 Languages: %s ",AVAILABLE_LANGUAGES)
 
 def default_language():
     """
@@ -106,46 +129,46 @@ def language_choices(language,choices):
     return l
 
 
-LONG_DATE_FMT = {
-  #~ None: 'l, j F Y',
-  None: 'l, F j, Y',
-  'en': 'l, F j, Y',
-  'de': 'l, j. F Y',
-  'nl': 'l, j. F Y',
-  'fr': 'l j F Y',
-  'et': 'l, j F Y.a.',
-}
+#~ LONG_DATE_FMT = {
+  #~ # None: 'l, j F Y',
+  #~ None: 'l, F j, Y',
+  #~ 'en': 'l, F j, Y',
+  #~ 'de': 'l, j. F Y',
+  #~ 'nl': 'l, j. F Y',
+  #~ 'fr': 'l j F Y',
+  #~ 'et': 'l, j F Y.a.',
+#~ }
 
-SHORT_DATE_FMT = {
-  None: 'Y-m-d',
-  'en': 'Y-m-d',
-  'de': 'd.m.Y',
-  'nl': 'd.m.Y',
-  'et': 'd.m.Y',
-  'fr': 'd/m/Y',
-}
+#~ SHORT_DATE_FMT = {
+  #~ None: 'Y-m-d',
+  #~ 'en': 'Y-m-d',
+  #~ 'de': 'd.m.Y',
+  #~ 'nl': 'd.m.Y',
+  #~ 'et': 'd.m.Y',
+  #~ 'fr': 'd/m/Y',
+#~ }
 
 
-def lc2locale(lang,country):
-    """
-    Convert a combination of `lang` and `country` codes to 
-    a platform-dependant locale setting to be used for 
-    :func:`locale.setlocale`.
-    Thanks to 
-    http://www.gossamer-threads.com/lists/python/bugs/721929
-    and
-    http://msdn.microsoft.com/en-us/library/hzz3tw78
-    """
-    if sys.platform == 'win32': # development server
-        if lang == 'fr':
-            if country == 'BE': return 'french-belgian'
-            return 'french'
-        if lang == 'de':
-            if country == 'BE': return 'german-belgian'
-            return 'german'
-        raise NotImplementedError("lc2locale(%r,%r)" % (lang,country))
-    else:
-        return lang+'_'+country
+#~ def lc2locale(lang,country):
+    #~ """
+    #~ Convert a combination of `lang` and `country` codes to 
+    #~ a platform-dependant locale setting to be used for 
+    #~ :func:`locale.setlocale`.
+    #~ Thanks to 
+    #~ http://www.gossamer-threads.com/lists/python/bugs/721929
+    #~ and
+    #~ http://msdn.microsoft.com/en-us/library/hzz3tw78
+    #~ """
+    #~ if sys.platform == 'win32': # development server
+        #~ if lang == 'fr':
+            #~ if country == 'BE': return 'french-belgian'
+            #~ return 'french'
+        #~ if lang == 'de':
+            #~ if country == 'BE': return 'german-belgian'
+            #~ return 'german'
+        #~ raise NotImplementedError("lc2locale(%r,%r)" % (lang,country))
+    #~ else:
+        #~ return lang+'_'+country
         
 
 def monthname(n):
@@ -159,38 +182,38 @@ def dtomy(d):
     if d is None: return ''
     return defaultfilters.date(d,'F Y')
 
-def dtos(d):
-    "Return the specified date as a localized short string of type '15.06.2011'."
-    if d is None: return ''
-    return defaultfilters.date(d,SHORT_DATE_FMT[get_language()])
+#~ def dtos(d):
+    #~ "Return the specified date as a localized short string of type '15.06.2011'."
+    #~ if d is None: return ''
+    #~ return defaultfilters.date(d,SHORT_DATE_FMT[get_language()])
     #~ return d.strftime(SHORT_DATE_FMT[LANG])
 
-def dtosl(d):
-    "Return the specified date as a localized long string of type 'Wednesday, May 4, 2011'."
-    if d is None: return ''
-    return defaultfilters.date(d,LONG_DATE_FMT[get_language()])
+from djangosite.dbutils import dtos
+from djangosite.dbutils import dtosl
+#~ def dtosl(d):
+    #~ "Return the specified date as a localized long string of type 'Wednesday, May 4, 2011'."
+    #~ if d is None: return ''
+    #~ return defaultfilters.date(d,LONG_DATE_FMT[get_language()])
     #~ return d.strftime(LONG_DATE_FMT[LANG])
     
 
     
 def set_language(lang):
     """
-    Setting the locale is necessary in order to have :func:`dtosl` 
-    return month names in the correct language.
-    
-    Note that :func:`locale.setlocale` is not thread-safe on most systems.
-    http://www.velocityreviews.com/forums/t348372-setlocale-in-a-module-extension-library.html
-    http://www.velocityreviews.com/forums/t332047-setlocale-returns-error.html
+    Thin wrapper around `django.utils.translation`.
+    Activate the given language. Calls deactivate if 
+    the given language is `None` or :attr:`DEFAULT_LANGUAGE`.
     """
     #~ print "20111111 babel.set_language()", lang
-    if lang is None or lang is DEFAULT_LANGUAGE:
+    #~ if lang is None or lang == DEFAULT_LANGUAGE:
+    if lang is None or lang == "en":
         #~ locale.setlocale(locale.LC_ALL,'')
         translation.deactivate()
     else:
-        if not lang in AVAILABLE_LANGUAGES:
-            raise Exception(
-              "Cannot set language to %s: available languages are %s." % (
-              lang,AVAILABLE_LANGUAGES))
+        #~ if not lang in AVAILABLE_LANGUAGES:
+            #~ raise Exception(
+              #~ "Cannot set language to %s: available languages are %s." % (
+              #~ lang,AVAILABLE_LANGUAGES))
         translation.activate(lang)
         #~ country = settings.LANGUAGE_CODE[3:]
         #~ locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
@@ -252,7 +275,7 @@ def contribute_to_class(field,cls,fieldclass,**kw):
 class BabelCharField(models.CharField):
     """
     Define a variable number of clones of the "master" field, 
-    one for each language of your :setting:`BABEL_LANGS`.
+    one for each language of your :attr:`djangosite.Site.languages`.
     """
         
     def contribute_to_class(self, cls, name):
@@ -355,23 +378,23 @@ def babeldict_getitem(d,k):
         return babelitem(**v)
         
         
-def unused_discover():
-    """
-    This would somehow have to be called 
-    *during* and not after model setup.
-    """
-    logger.debug("Discovering babel fields...")
-    for model in models.get_models():
-        babel_fields = getattr(model,'babel_fields',None)
-        if babel_fields:
-            for name in babel_fields:
-                add_babel_field(model,name)
+#~ def unused_discover():
+    #~ """
+    #~ This would somehow have to be called 
+    #~ *during* and not after model setup.
+    #~ """
+    #~ logger.debug("Discovering babel fields...")
+    #~ for model in models.get_models():
+        #~ babel_fields = getattr(model,'babel_fields',None)
+        #~ if babel_fields:
+            #~ for name in babel_fields:
+                #~ add_babel_field(model,name)
                 
                 
                 
 class BabelNamed(models.Model):
     """
-    Mixin for models that have a mandatory field `name` 
+    Mixin for models that have a babel field `name` 
     (labelled "Description") for each language.
     """
     
@@ -387,15 +410,15 @@ class BabelNamed(models.Model):
                 
 class LanguageField(models.CharField):
     """
-    A field that lets the user select a language 
-    from :setting:`LANGUAGES` setting.
+    A field that lets the user select 
+    a language from the available babel languages.
     """
     def __init__(self, *args, **kw):
         defaults = dict(
             verbose_name=_("Language"),
             choices=LANGUAGE_CHOICES,
-            #~ default=DEFAULT_LANGUAGE,
-            default=get_language,
+            default=DEFAULT_LANGUAGE,
+            #~ default=get_language,
             max_length=LANGUAGE_CODE_MAX_LENGTH,
             )
         defaults.update(kw)
@@ -423,7 +446,8 @@ LOOKUP_OP = '__iexact'
 
 def lookup_filter(fieldname,value,**kw):
     """
-    Deserves a docstring.
+    Return a `models.Q` to be used if you want to search for a given 
+    string in any of the languages for the given babel field.
     """
     kw[fieldname+LOOKUP_OP] = value
     #~ kw[fieldname] = value

@@ -35,5 +35,5 @@ Contents
    babel
    tutorials/index
    releases/index
-   autodoc/index
+   API <api/north>
 

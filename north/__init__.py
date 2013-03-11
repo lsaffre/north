@@ -23,22 +23,22 @@ __version__ = SETUP_INFO['version'] #
 #~ __copyright__ = "Copyright (c) 2002-2013 Luc Saffre."
 
 
-gettext = lambda s: s
+#~ gettext = lambda s: s
 
-# todo: remove this
-def language_choices(*args):
-    """
-    A subset of Django's LANGUAGES.
-    See :doc:`/blog/2011/0226`.
-    """
-    _langs = dict(
-        en=gettext('English'),
-        de=gettext('German'),
-        fr=gettext('French'),
-        nl=gettext('Dutch'),
-        et=gettext('Estonian'),
-    )
-    return [(x,_langs[x]) for x in args]
+#~ # todo: remove this
+#~ def language_choices(*args):
+    #~ """
+    #~ A subset of Django's LANGUAGES.
+    #~ See :doc:`/blog/2011/0226`.
+    #~ """
+    #~ _langs = dict(
+        #~ en=gettext('English'),
+        #~ de=gettext('German'),
+        #~ fr=gettext('French'),
+        #~ nl=gettext('Dutch'),
+        #~ et=gettext('Estonian'),
+    #~ )
+    #~ return [(x,_langs[x]) for x in args]
       
 
 
@@ -47,31 +47,6 @@ class Site(Site):
     """
     Extends :class:`djangosite.Site`
     by adding some attributes and methods used by `north`.
-    """
-    
-    languages = None
-    
-    #~ languages = ['en']
-    
-    """
-    The language distribution used in this database.
-    
-    This must be either `None` or an iterable of language codes.
-    Examples::
-    
-      languages = "en de fr nl et".split()
-      languages = ['en']
-      
-    The first language in this list will be the site's 
-    default language.
-    
-    Changing this setting affects your database structure 
-    if your application uses babel fields,
-    and thus require a data migration.
-    
-    ? Lino will use this setting to set the Django 
-    ? settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.
-    
     """
     
     demo_fixtures = ['std','demo']
@@ -104,12 +79,6 @@ class Site(Site):
         self.update_settings(SERIALIZATION_MODULES = {
             "py" : "north.dpy",
         })
-        
-        if self.languages is not None:
-            lc = language_choices(*self.languages)
-            self.update_settings(LANGUAGES = lc)
-            self.update_settings(LANGUAGE_CODE = lc[0][0])
-        
         
         
     def install_migrations(self,*args):
