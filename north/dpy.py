@@ -162,7 +162,7 @@ def new_content_type_id(m):
 ''')
             s = ','.join([
               '%s=values[%d]' % (k,i) 
-                for i,k in enumerate(babel.AVAILABLE_LANGUAGES)])
+                for i,k in enumerate(settings.SITE.AVAILABLE_LANGUAGES)])
             self.stream.write('''
 def bv2kw(fieldname,values):
     """
@@ -533,7 +533,7 @@ class DpyDeserializer:
         #~ logger.info("20120225 DpyDeserializer.deserialize()")
         if isinstance(fp, basestring):
             raise NotImplementedError
-        babel.set_language(babel.DEFAULT_LANGUAGE)
+        babel.set_language(settings.SITE.DEFAULT_LANGUAGE)
         
         #~ self.count += 1
         fqname = 'north.dpy_tmp_%s' % hash(self)
@@ -548,8 +548,15 @@ class DpyDeserializer:
             fqname = fqname[:-len(SUFFIX)]
             print fqname
         desc = (SUFFIX,'r',imp.PY_SOURCE)
+        logger.info("Loading %s...",fp.name)
+        
         module = imp.load_module(fqname, fp, fp.name, desc)
         #~ module = __import__(filename)
+        
+        for o in self.deserialize_module(module,**options): 
+            yield o
+                
+    def deserialize_module(self,module, **options):
         
         def expand(obj):
             if obj is None:
@@ -572,9 +579,9 @@ class DpyDeserializer:
             else:
                 logger.warning("Ignored unknown object %r",obj)
                 
-        logger.info("Loading %s...",fp.name)
         if not hasattr(module,'objects'):
-            raise Exception("%s has no attribute 'objects'" % fp.name)
+            #~ raise Exception("%s has no attribute 'objects'" % fp.name)
+            raise Exception("Fixture %s has no attribute 'objects'" % module.__name__)
         empty_fixture = True
         for obj in module.objects():
             for o in expand(obj): 
@@ -630,7 +637,7 @@ See <https://code.djangoproject.com/ticket/18213>.
             
         if hasattr(module,'after_load'):
             module.after_load()
-        #~ IS_DESERIALIZING = False
+        
 
     def register_success(self):
         self.saved += 1
@@ -722,3 +729,18 @@ def install_migrations(self,globals_dict):
                     from_version,current_version)
             break
 
+
+def load_fixture_from_module(m, **options):
+    """
+    Used in unit tests to manually load a given fixture.
+    """
+    #~ filename = m.__file__[:-1]
+    #~ print filename
+    #~ assert filename.endswith('.py')
+    #~ fp = open(filename)
+    d = DpyDeserializer()
+    for o in d.deserialize_module(m, **options):
+        o.save()
+    if d.saved != 1:
+        raise Exception("Failed to load Python fixture from module %s" % m.__name__)
+    #~ return d

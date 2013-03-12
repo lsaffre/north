@@ -52,81 +52,10 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-LANGUAGE_CODE_MAX_LENGTH = 2
-"""
-"""
 
-def simplified_code(code):
-    """
-    We store only the main code, supposing that nobody maintains
-    multilingual database content for different variants of the 
-    same language.
-    """
-    return code[:LANGUAGE_CODE_MAX_LENGTH].strip()
+from north import LANGUAGE_CODE_MAX_LENGTH
 
-#~ DEFAULT_LANGUAGE = simplified_code(settings.LANGUAGE_CODE)
-
-def langtext(code):
-    for k,v in settings.LANGUAGES:
-        if k == code: return v
-    raise Exception(
-        "Unknown language code %r (must be one of %s)" % (
-        code,[x[0] for x in settings.LANGUAGES]))
-    #~ return "English"
-
-LANGUAGE_CHOICES = []
-LANGUAGE_DICT = dict() # used in lino.modlib.users
-
-def _add_language(code,text,full_code):
-    LANGUAGE_DICT[code] = text
-    LANGUAGE_CHOICES.append( (code,text) )
-
-#~ _add_language(DEFAULT_LANGUAGE,_(langtext(settings.LANGUAGE_CODE)))
-   
-if settings.SITE.languages is None:
-  
-    _add_language('en',_("English"),'en-us')
-    DEFAULT_LANGUAGE = 'en'
-    
-else:
-  
-    for code in settings.SITE.languages:
-        text = _(langtext(code))
-        k = simplified_code(code)
-        if k in LANGUAGE_DICT:
-            raise Exception("Duplicate base language %r" % k)
-        _add_language(k,text,code)
-        
-    DEFAULT_LANGUAGE = LANGUAGE_CHOICES[0][0]
-
-            
-    #~ LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES 
-          #~ if k in settings.SITE.languages]
-
-assert DEFAULT_LANGUAGE in [x[0] for x in settings.LANGUAGES]
-  
-BABEL_LANGS = [x[0] for x in LANGUAGE_CHOICES if x[0] != DEFAULT_LANGUAGE]
-#~ BABEL_LANGS = [x[0] for x in settings.LANGUAGES if x[0] != DEFAULT_LANGUAGE]
-  
-AVAILABLE_LANGUAGES = tuple([DEFAULT_LANGUAGE] + BABEL_LANGS)
-
-BABEL_LANGS = tuple(BABEL_LANGS)
-
-#~ logger.info("20130311 Languages: %s ",AVAILABLE_LANGUAGES)
-
-def default_language():
-    """
-    Returns the default language of this website
-    as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
-    """
-    return DEFAULT_LANGUAGE
-    
-    
-def language_choices(language,choices):
-    l = choices.get(language,None)
-    if l is None:
-        l = choices.get(DEFAULT_LANGUAGE)
-    return l
+#~ from djangosite import Site
 
 
 #~ LONG_DATE_FMT = {
@@ -253,7 +182,7 @@ def babelattr(obj,attrname,*args):
     
     """
     LANG = translation.get_language()
-    if LANG is not None and LANG != default_language():
+    if LANG is not None and LANG != settings.SITE.default_language():
         v = getattr(obj,attrname+"_"+LANG,None)
         if v:
             return v
@@ -265,7 +194,7 @@ def contribute_to_class(field,cls,fieldclass,**kw):
     if cls._meta.abstract:
         return
     kw.update(blank=True)
-    for lang in BABEL_LANGS:
+    for lang in settings.SITE.BABEL_LANGS:
         kw.update(verbose_name=string_concat(field.verbose_name,' ('+lang+')'))
         newfield = fieldclass(**kw)
         #~ newfield._lino_babel_field = True 
@@ -320,10 +249,10 @@ def babel_values(name,**kw):
     """
     #~ d = { name : kw.get(default_language())}
     d = dict()
-    v = kw.get(default_language())
+    v = kw.get(settings.SITE.default_language())
     if v is not None:
         d[name] = v
-    for lang in BABEL_LANGS:
+    for lang in settings.SITE.BABEL_LANGS:
         v = kw.get(lang,None)
         if v is not None:
             d[name+'_'+lang] = v
@@ -336,16 +265,16 @@ def args2kw(name,*args):
     Takes the basename of a BabelField and the values for each language.
     Returns a `dict` mapping the actual fieldnames to their values.
     """
-    assert len(args) == len(AVAILABLE_LANGUAGES)
+    assert len(args) == len(settings.SITE.AVAILABLE_LANGUAGES)
     kw = {name:args[0]}
-    for i,lang in enumerate(BABEL_LANGS):
+    for i,lang in enumerate(settings.SITE.BABEL_LANGS):
         kw[name+'_'+lang] = args[i+1]
     return kw
         
 
 def field2kw(obj,name):
-    d = { default_language() : getattr(obj,name) }
-    for lang in BABEL_LANGS:
+    d = { settings.SITE.default_language() : getattr(obj,name) }
+    for lang in settings.SITE.BABEL_LANGS:
         v = getattr(obj,name+'_'+lang)
         if v:
             d[lang] = v
@@ -353,7 +282,7 @@ def field2kw(obj,name):
   
 def field2args(obj,name):
     l = [ getattr(obj,name) ]
-    for lang in BABEL_LANGS:
+    for lang in settings.SITE.BABEL_LANGS:
         l.append(getattr(obj,name+'_'+lang))
     return l
   
@@ -362,11 +291,11 @@ def babelitem(**v):
     lng = translation.get_language()
     #~ print lng,v
     #~ lng = LANG or DEFAULT_LANGUAGE
-    if lng == DEFAULT_LANGUAGE:
+    if lng == settings.SITE.DEFAULT_LANGUAGE:
         return v.get(lng)
     x = v.get(lng,None)
     if x is None:
-        x = v.get(DEFAULT_LANGUAGE)
+        x = v.get(settings.SITE.DEFAULT_LANGUAGE)
     return x
     
 # babel_get(v) = babelitem(**v)
@@ -416,8 +345,8 @@ class LanguageField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
             verbose_name=_("Language"),
-            choices=LANGUAGE_CHOICES,
-            default=DEFAULT_LANGUAGE,
+            choices=settings.SITE.LANGUAGE_CHOICES,
+            default=settings.SITE.DEFAULT_LANGUAGE,
             #~ default=get_language,
             max_length=LANGUAGE_CODE_MAX_LENGTH,
             )
@@ -453,7 +382,7 @@ def lookup_filter(fieldname,value,**kw):
     #~ kw[fieldname] = value
     flt = models.Q(**kw)
     del kw[fieldname+LOOKUP_OP]
-    for lng in BABEL_LANGS:
+    for lng in settings.SITE.BABEL_LANGS:
         kw[fieldname+'_'+lng+LOOKUP_OP] = value
         #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
         #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})

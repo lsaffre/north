@@ -5,6 +5,8 @@
 import os
 
 from djangosite import Site
+#~ from north.babel import BabelSiteMixin
+#~ from north.babel import Site
 
 #~ execfile(os.path.join(os.path.dirname(__file__),'version.py'))
 #~ execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
@@ -39,8 +41,21 @@ __version__ = SETUP_INFO['version'] #
         #~ et=gettext('Estonian'),
     #~ )
     #~ return [(x,_langs[x]) for x in args]
-      
 
+
+LANGUAGE_CODE_MAX_LENGTH = 2
+"""
+"""
+
+def simplified_code(code):
+    """
+    We store only the main code, supposing that nobody maintains
+    multilingual database content for different variants of the 
+    same language.
+    """
+    return code[:LANGUAGE_CODE_MAX_LENGTH].strip()
+
+#~ DEFAULT_LANGUAGE = simplified_code(settings.LANGUAGE_CODE)
 
 
 class Site(Site):
@@ -93,9 +108,85 @@ class Site(Site):
         for u in super(Site,self).using(ui): yield u
         yield (SETUP_INFO['name'],SETUP_INFO['version'],SETUP_INFO['url'])
         
+   
+    def apply_languages(self):
+      
+        super(Site,self).apply_languages()
+      
+        self.LANGUAGE_CHOICES = []
+        self.LANGUAGE_DICT = dict() # used in lino.modlib.users
+        
+        if self.languages is None:
+            self.DEFAULT_LANGUAGE = 'en'
+            self.AVAILABLE_LANGUAGES = (self.DEFAULT_LANGUAGE,)
+            self.BABEL_LANGS = tuple()
+        else:
+            self.DEFAULT_LANGUAGE = self.languages[0]
+            self.BABEL_LANGS = tuple(self.languages[1:])
+            self.AVAILABLE_LANGUAGES = (self.DEFAULT_LANGUAGE,) + self.BABEL_LANGS
+          
 
-#~ class Site(BaseSite):
-    
-    #~ def __init__(self,*args,**kwargs):
-        #~ super(Site,self).__init__(*args)
-        #~ self.run_djangosite_local(**kwargs)
+    def do_site_startup(self):
+      
+        super(Site,self).do_site_startup()
+        
+        from django.conf import settings
+        
+        def langtext(code):
+            for k,v in settings.LANGUAGES:
+                if k == code: return v
+            raise Exception(
+                "Unknown language code %r (must be one of %s)" % (
+                code,[x[0] for x in settings.LANGUAGES]))
+            #~ return "English"
+
+        def _add_language(code,text,full_code):
+            self.LANGUAGE_DICT[code] = text
+            self.LANGUAGE_CHOICES.append( (code,text) )
+
+        #~ _add_language(DEFAULT_LANGUAGE,_(langtext(settings.LANGUAGE_CODE)))
+        
+        from django.utils.translation import ugettext_lazy as _
+      
+        if self.languages is None:
+          
+            _add_language('en',_("English"),'en-us')
+            
+        else:
+          
+            for code in self.languages:
+                text = _(langtext(code))
+                k = simplified_code(code)
+                if k in self.LANGUAGE_DICT:
+                    raise Exception("Duplicate base language %r" % k)
+                _add_language(k,text,code)
+                
+
+            #~ LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES 
+                  #~ if k in settings.SITE.languages]
+
+            #~ assert self.DEFAULT_LANGUAGE in [x[0] for x in self.django_settings.LANGUAGES]
+          
+            #~ self.BABEL_LANGS = [x[0] for x in self.LANGUAGE_CHOICES if x[0] != self.DEFAULT_LANGUAGE]
+            #~ BABEL_LANGS = [x[0] for x in settings.LANGUAGES if x[0] != DEFAULT_LANGUAGE]
+          
+
+        #~ self.BABEL_LANGS = tuple(self.BABEL_LANGS)
+
+        #~ logger.info("20130311 Languages: %s ",AVAILABLE_LANGUAGES)
+
+    def default_language(self):
+        """
+        Returns the default language of this website
+        as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
+        """
+        return self.DEFAULT_LANGUAGE
+        
+        
+    def language_choices(self,language,choices):
+        l = choices.get(language,None)
+        if l is None:
+            l = choices.get(self.DEFAULT_LANGUAGE)
+        return l
+
+
