@@ -1,1 +1,7 @@
-T:\hgwork\north\docs\dpy.rst:44: WARNING: unknown document: /tutorials/dumpy
+t:\hgwork\north\north\__init__.py:docstring of north.__init__.Site.loading_from_dump:1: WARNING: unknown document: /blog/2011/0901
+t:\hgwork\north\north\babel.py:docstring of north.babel.babelattr:20: WARNING: unknown document: /topics/babel
+t:\hgwork\north\north\babel.py:docstring of north.babel.babelattr:22: WARNING: unknown document: /blog/2010/1207
+t:\hgwork\north\north\babel.py:docstring of north.babel.getattr_lang:20: WARNING: unknown document: /topics/babel
+t:\hgwork\north\north\babel.py:docstring of north.babel.getattr_lang:22: WARNING: unknown document: /blog/2010/1207
+T:\hgwork\north\docs\api\north.rst:15: WARNING: unknown document: /topics/datamig
+T:\hgwork\north\docs\api\north.rst:7: WARNING: unknown document: /topics/dumpy
