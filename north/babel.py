@@ -135,6 +135,9 @@ def set_language(lang):
     """
     #~ print "20111111 babel.set_language()", lang
     #~ if lang is None or lang == DEFAULT_LANGUAGE:
+    if lang is not None:
+        if not lang in settings.SITE.AVAILABLE_LANGUAGES:
+            raise Exception("Invalid language %r" % lang)
     if lang is None or lang == "en":
         #~ locale.setlocale(locale.LC_ALL,'')
         translation.deactivate()
