@@ -9,8 +9,8 @@ from djangosite import Site
 #~ from north.babel import Site
 
 #~ execfile(os.path.join(os.path.dirname(__file__),'version.py'))
-#~ execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
-execfile(os.path.join(os.path.dirname(__file__),'..','setup_info.py'))
+execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
+#~ execfile(os.path.join(os.path.dirname(__file__),'..','setup_info.py'))
 
 __version__ = SETUP_INFO['version'] # 
 
