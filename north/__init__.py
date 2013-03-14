@@ -85,7 +85,6 @@ class Site(Site):
     :func:`lino.modlib.cal.models.update_auto_task`
     and
     :mod:`lino.modlib.mails.models`.
-    See also :doc:`/blog/2011/0901`.
     """
     
     #~ def __init__(self,*args):

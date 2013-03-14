@@ -160,7 +160,7 @@ def set_language(lang):
     
 def babelattr(obj,attrname,*args):
     """
-    return the value of the specified attribute `attrname` of `obj`,
+    Return the value of the specified attribute `attrname` of `obj`,
     but if `obj` also has a multi-language version of that 
     attribute for the current language, then prefer this attribute's 
     value if it is not blank.
@@ -178,10 +178,6 @@ def babelattr(obj,attrname,*args):
     it returns :attr:`isip.ContractType.name`.
 
     Not tested for other field types than CHAR.
-    
-    Topic: :doc:`/topics/babel`.
-    
-    See also :doc:`/blog/2010/1207`.
     
     """
     LANG = translation.get_language()

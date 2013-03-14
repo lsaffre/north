@@ -5,6 +5,7 @@ Tutorials
 .. toctree::
    :maxdepth: 1
 
-   babel
+   catalog/index
+   polls/mysite/index
 
 

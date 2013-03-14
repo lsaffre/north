@@ -34,6 +34,5 @@ French designation of their products.
 
 See also:
 
-- The :doc:`/tutorials/babel` tutorial
-- The :mod:`lino.utils.babel` module
-- The :attr:`languages <north.Site.languages>` setting
+- The :doc:`/tutorials/catalog/index` tutorial
+- The :attr:`languages <djangosite.Site.languages>` setting

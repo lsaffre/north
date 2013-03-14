@@ -1,49 +1,9 @@
 # -*- coding: utf-8 -*-
-#
-# Sphinx documentation build configuration file, created by
-# sphinx-quickstart on Thu Nov 13 11:09:54 2008.
-#
-# This file is execfile()d with the current directory set to its containing dir.
-#
-# The contents of this file are pickled, so don't put values in the namespace
-# that aren't pickleable (module imports are okay, they're removed automatically).
-#
-# All configuration values have a default; values that are commented out
-# serve to show the default.
-
 import sys, os
-from unipath import Path
-DOCSDIR = Path(__file__).parent.absolute()
-sys.path.append(DOCSDIR)
+from djangosite.utils.sphinxconf import configure
+configure(__file__,globals())
 
 import north
-
-#~ os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-"""
-Trigger loading of Djangos model cache in order to avoid side effects that 
-would occur when this happens later while importing one of the models modules.
-"""
-from django.conf import settings
-
-
-
-# General configuration
-# ---------------------
-
-# Add any Sphinx extension module names here, as strings. They can be extensions
-# coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = [
-  'sphinx.ext.autodoc',
-  #~ 'sphinx.ext.autosummary',
-  'sphinx.ext.inheritance_diagram',
-  'sphinx.ext.todo',
-  'sphinx.ext.extlinks',
-  'sphinx.ext.graphviz',
-  'sphinx.ext.intersphinx',
-  'sphinx.ext.doctest',
-]
-
 
 primary_domain = 'py'
 
@@ -239,25 +199,8 @@ extlinks = {
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
     
-#~ intersphinx_mapping = {
-  #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
-#~ }
 
 
-HGWORK = DOCSDIR.ancestor(2)
-intersphinx_mapping = dict()
-intersphinx_mapping.update(site=(
-    'http://site.lino-framework.org',
-    Path(HGWORK,'site','docs','.build','objects.inv')))
-intersphinx_mapping.update(north=(
-    'http://north.lino-framework.org',
-    Path(HGWORK,'north','docs','.build','objects.inv')))
-intersphinx_mapping.update(lino=(
-    'http://www.lino-framework.org',
-    Path(HGWORK,'lino','docs','.build','objects.inv')))
-intersphinx_mapping.update(welfare=(
-    'http://welfare.lino-framework.org',
-    Path(HGWORK,'welfare','docs','.build','objects.inv')))
 
 autosummary_generate = True
 
@@ -272,9 +215,10 @@ todo_include_todos = True
 #~ New in version 1.1
 gettext_compact = True
 
-from djangosite.utils.sphinxconf import setup
+#~ from djangosite.utils.sphinxconf import setup
 #~ from lino.utils.sphinx import setup as stdsetup
 #~ def setup(app):
     #~ stdsetup(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
+    

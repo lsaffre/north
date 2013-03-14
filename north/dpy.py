@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"Documented in :doc:`/topics/dumpy`."
+"Documented in :ref:`dpy`."
 
 import logging
 logger = logging.getLogger(__name__)

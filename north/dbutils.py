@@ -31,8 +31,7 @@ class UnresolvedModel:
     if the specified model is not installed.
     
     We don't want resolve_model to raise an Exception because there are 
-    cases of :doc:`data migration </topics/datamig>` where it would 
-    disturb. 
+    cases of :ref:`datamig` where it would disturb. 
     Asking for a non-installed model is not a sin, but trying to use it is.
     
     I didn't yet bother very much about finding a way to make the 

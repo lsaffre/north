@@ -10,22 +10,37 @@ This tutorial shows how North supports
 Let's create a little Site with the following 
 :xfile:`models.py` file:
 
-.. literalinclude:: catalog/models.py
+.. literalinclude:: models.py
 
-And here is the :xfile:`settings.py` file:
+..
+  >>> from tutorials.catalog.models import *
+  
 
-.. literalinclude:: catalog/settings.py
+The settings.py file is where you specify the 
+:attr:`languages <djangosite.Site.languages>` 
+setting of a given Site instance:
 
-This is where you specify the 
-:attr:`languages <north.Site.languages>` 
-setting of a given Site instance.
+.. literalinclude:: settings.py
+  
 
+The `demo` fixture
+------------------
 
-.. djangodoctest:: tutorials.catalog.settings
+Now we install some demo data. Here is a Python fixture:
 
-Now we install some demo data:
+.. literalinclude:: fixtures/demo.py
 
->>> # -*- coding: utf-8 -*-
+Note how the application developer doesn't know which 
+:attr:`languages <djangosite.Site.languages>` setting at runtime.
+
+Of course the fixture above supposes a single person who knows 
+all the languages, but that's just because we are simplifying. 
+In reality you can do it as sophisticated as you want, 
+reading the content from different sources.
+
+Here is how to install this data:
+
+>>> from django.core.management import call_command
 >>> call_command('initdb','demo',interactive=False)
 Creating tables ...
 Creating table catalog_product
@@ -35,7 +50,6 @@ Installed 6 object(s) from 1 fixture(s)
 
 And finally we can print a catalog in different languages:
 
->>> from tutorials.catalog.models import Product
 >>> print ', '.join([unicode(p) for p in Product.objects.all()])
 Chair, Table, Monitor, Mouse, Keyboard, Consultation
 
@@ -49,24 +63,11 @@ North doesn't impose any templating or other system to do
 that, so the formatting details are not subject of this tutorial.
 
 
-The `demo` fixture
-------------------
-
-.. literalinclude:: catalog/fixtures/demo.py
-
-Note how the application developer doesn't know which 
-:attr:`languages <north.Site.languages>` setting at runtime.
-
-Of course the fixture above supposes a single person who knows 
-all the languages, but that's just because we are simplifying. 
-In reality you can do it as sophisticated as you want, 
-reading the content from different sources.
-
 Where to go next
 ----------------
 
 One detail is missing to make North's multi-linguale fields 
-usable in a normal Django project: an possibility to integrate 
+usable in a normal Django project: a possibility to integrate 
 these variable fields into your Admin form.
 
 I didn't write this until now because nobody asked me, and 

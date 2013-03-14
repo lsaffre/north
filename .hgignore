@@ -10,3 +10,4 @@ htmlcov
 .coverage
 docs/api
 tmp
+test.db
