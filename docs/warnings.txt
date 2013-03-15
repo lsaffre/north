@@ -1,4 +1,0 @@
-
-Warning, treated as error:
-T:\hgwork\north\docs\tutorials\polls\mysite\index.rst:48: WARNING: Include file u'T:\\hgwork\\north\\docs\\tutorials\\polls\\mysite\\polls/fixtures/demo.py' not found or reading it failed
-

@@ -41,7 +41,7 @@ fixtures.
 
 See also
 
-- :doc:`/tutorials/polls/index`
+- :doc:`/tutorials/polls/mysite/index`
 - http://code.djangoproject.com/ticket/10664
  
 Note about `django-extensions <https://github.com/django-extensions>`_ 
