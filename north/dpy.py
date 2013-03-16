@@ -164,7 +164,7 @@ def new_content_type_id(m):
               #~ '%s=values[%d]' % (k,i) 
                 #~ for i,k in enumerate(settings.SITE.AVAILABLE_LANGUAGES)])
             s = ','.join([
-              '%s=values[%d]' % (li.name,li.index) 
+              '%s=values[%d]' % (lng.name,lng.index) 
                 for lng in settings.SITE.languages])
             self.stream.write('''
 def bv2kw(fieldname,values):
