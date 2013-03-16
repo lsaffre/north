@@ -1,6 +1,6 @@
 SETUP_INFO = dict(
   version = '0.0.4',
-  install_requires = ['Django','djangosite==0.0.4'],
+  install_requires = ['Django','djangosite==0.0.4','Babel'],
   #~ name = 'django-north',
   name = 'North',
   description = "Another way to migrate Django databases",
