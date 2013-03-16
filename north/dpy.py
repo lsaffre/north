@@ -144,7 +144,7 @@ from __future__ import unicode_literals
             self.stream.write('from decimal import Decimal\n')
             self.stream.write('from datetime import datetime as dt\n')
             self.stream.write('from datetime import time,date\n')
-            self.stream.write('from north import dbutils\n')
+            #~ self.stream.write('from north import dbutils\n')
             self.stream.write('from north.dpy import create_mti_child\n')
             self.stream.write('from north.utils import resolve_model\n')
             self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
@@ -745,3 +745,4 @@ def load_fixture_from_module(m, **options):
     if d.saved != 1:
         raise Exception("Failed to load Python fixture from module %s" % m.__name__)
     #~ return d
+
