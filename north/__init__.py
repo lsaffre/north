@@ -367,7 +367,7 @@ class Site(Site):
 
     
 
-    def kw2fields(self,name,**kw):
+    def babelkw(self,name,**kw):
         """
         Return a dict with appropriate resolved field names for a 
         BabelField `name` and a set of hard-coded values. 
@@ -380,19 +380,19 @@ class Site(Site):
         The field names where this info gets stored depends on the 
         Site's `languages` distribution.
         
-        >>> Site(languages="de-be en").kw2fields('name',**kw)
+        >>> Site(languages="de-be en").babelkw('name',**kw)
         {'name_en': 'Hello', 'name': 'Hallo'}
         
-        >>> Site(languages="en de-be").kw2fields('name',**kw)
+        >>> Site(languages="en de-be").babelkw('name',**kw)
         {'name_de_BE': 'Hallo', 'name': 'Hello'}
         
-        >>> Site(languages="en-gb de").kw2fields('name',**kw)
+        >>> Site(languages="en-gb de").babelkw('name',**kw)
         {'name_de': 'Hallo', 'name': 'Hello'}
         
-        >>> Site(languages="en").kw2fields('name',**kw)
+        >>> Site(languages="en").babelkw('name',**kw)
         {'name': 'Hello'}
         
-        >>> Site(languages="de-be en").kw2fields('name',de="Hallo",en="Hello")
+        >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello")
         {'name_en': 'Hello', 'name': 'Hallo'}
         
         """
@@ -515,7 +515,7 @@ class Site(Site):
         >>> from djangosite.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
-        ...     obj = AttrDict(site.kw2fields('name',de="Hallo",en="Hello",fr="Salut"))
+        ...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))
         ...     return site,obj
         
         

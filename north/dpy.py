@@ -171,7 +171,7 @@ def bv2kw(fieldname,values):
     """
     Needed if `Site.languages` changed between dumpdata and loaddata
     """
-    return settings.SITE.babel_values(fieldname,%s)
+    return settings.SITE.babelkw(fieldname,%s)
     
 ''' % s)
         #~ model = queryset.model
