@@ -122,10 +122,15 @@ class Site(Site):
     The language distribution used on this site.
     
     This must be either `None` or an iterable of language codes.
+    Or a string containing a space-separated suite of language codes.
+    
     Examples::
     
       languages = "en de fr nl et".split()
       languages = ['en']
+      languages = 'en fr'
+      
+    See :meth:`apply_languages` for more detailed description.
       
     The first language in this list will be the site's 
     default language.
@@ -189,6 +194,10 @@ class Site(Site):
         (LanguageInfo(django_code='en', name='en', index=0, suffix=''),
          LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
          LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
+        
+        >>> pprint(Site(languages="de-ch de-be").languages)
+        (LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
+         LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
         
         If we have more than languages en-us and en-gb *on a same Site*, 
         then it is not allowed to specify just "en". 
@@ -394,6 +403,13 @@ class Site(Site):
         
         >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello")
         {'name_en': 'Hello', 'name': 'Hallo'}
+
+        In the following example `babelkw` attributes the 
+        keyword `de` to the *first* language variant:
+        
+        >>> Site(languages="de-ch de-be").babelkw('name',**kw)
+        {'name': 'Hallo'}
+        
         
         """
         #~ d = { name : kw.get(default_language())}
