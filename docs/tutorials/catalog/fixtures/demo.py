@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from tutorials.catalog.models import Product
-from north.babel import babel_values
+from north.dbutils import babel_values
 
 def P(en,de,fr):
     return Product(**babel_values('name',en=en,de=de,fr=fr))

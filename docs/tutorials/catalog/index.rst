@@ -53,7 +53,7 @@ And finally we can print a catalog in different languages:
 >>> print ', '.join([unicode(p) for p in Product.objects.all()])
 Chair, Table, Monitor, Mouse, Keyboard, Consultation
 
->>> from north.babel import set_language
+>>> from north.dbutils import set_language
 >>> set_language('de')
 >>> print ', '.join([unicode(p) for p in Product.objects.all()])
 Stuhl, Tisch, Bildschirm, Maus, Tastatur, Beratung
@@ -61,6 +61,44 @@ Stuhl, Tisch, Bildschirm, Maus, Tastatur, Beratung
 
 North doesn't impose any templating or other system to do 
 that, so the formatting details are not subject of this tutorial.
+
+Formatting dates
+----------------
+
+The :func:`north.dbutils.format_date` function is a thin wrapper 
+to the corresponding function in `babel.dates`, 
+filling the `locale` parameter according to Django's 
+current language (and doing the conversion).
+
+The major advantage over using `date_format` from `django.utils.formats` 
+is that Babel offers a "full" format:
+
+>>> import datetime
+>>> today = datetime.date(2013,01,18)
+>>> from north.dbutils import format_date
+
+>>> set_language(None)
+>>> print format_date(today,'full')
+Friday, January 18, 2013
+
+>>> set_language('fr')
+>>> print format_date(today,'full')
+vendredi 18 janvier 2013
+
+>>> set_language('de')
+>>> print format_date(today,'full')
+Freitag, 18. Januar 2013
+
+You can use this also for languages that aren't on your site:
+
+>>> set_language('et')
+>>> print format_date(today,'full')
+reede, 18, jaanuar 2013
+
+>>> set_language('nl')
+>>> print format_date(today,'full')
+vrijdag 18 januari 2013
+
 
 
 Where to go next

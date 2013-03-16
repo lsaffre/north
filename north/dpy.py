@@ -37,7 +37,7 @@ from django.utils.encoding import smart_unicode, is_protected_type, force_unicod
 from django.utils.importlib import import_module
 
 from djangosite.dbutils import obj2str, sorted_models_list, full_model_name
-from north import babel
+from north import dbutils
 
 SUFFIX = '.py'
 
@@ -144,7 +144,7 @@ from __future__ import unicode_literals
             self.stream.write('from decimal import Decimal\n')
             self.stream.write('from datetime import datetime as dt\n')
             self.stream.write('from datetime import time,date\n')
-            self.stream.write('from north import babel\n')
+            self.stream.write('from north import dbutils\n')
             self.stream.write('from north.dpy import create_mti_child\n')
             self.stream.write('from north.utils import resolve_model\n')
             self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
@@ -168,7 +168,7 @@ def bv2kw(fieldname,values):
     """
     Needed if `Site.languages` changed between dumpdata and loaddata
     """
-    return babel.babel_values(fieldname,%s)
+    return settings.SITE.babel_values(fieldname,%s)
     
 ''' % s)
         #~ model = queryset.model
@@ -211,7 +211,7 @@ def bv2kw(fieldname,values):
                 for f in fields:
                     if getattr(f,'_lino_babel_field',False):
                         continue
-                    elif isinstance(f,(babel.BabelCharField,babel.BabelTextField)):
+                    elif isinstance(f,(dbutils.BabelCharField,dbutils.BabelTextField)):
                         self.stream.write(
                             '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
                             f.attname,f.attname,f.attname))
@@ -335,9 +335,9 @@ def bv2kw(fieldname,values):
         #~ self._current = None
 
     def value2string(self, obj, field):
-        if isinstance(field,(babel.BabelCharField,babel.BabelTextField)):
-            #~ return repr([repr(x) for x in babel.field2args(obj,field.name)])
-            return repr(babel.field2args(obj,field.name))
+        if isinstance(field,(dbutils.BabelCharField,dbutils.BabelTextField)):
+            #~ return repr([repr(x) for x in dbutils.field2args(obj,field.name)])
+            return repr(settings.SITE.field2args(obj,field.name))
         value = field._get_val_from_obj(obj)
         # Protected types (i.e., primitives like None, numbers, dates,
         # and Decimals) are passed through as is. All other values are
@@ -533,7 +533,8 @@ class DpyDeserializer:
         #~ logger.info("20120225 DpyDeserializer.deserialize()")
         if isinstance(fp, basestring):
             raise NotImplementedError
-        babel.set_language(settings.SITE.DEFAULT_LANGUAGE)
+        #~ dbutils.set_language(settings.SITE.DEFAULT_LANGUAGE.django_code)
+        dbutils.set_language()
         
         #~ self.count += 1
         fqname = 'north.dpy_tmp_%s' % hash(self)

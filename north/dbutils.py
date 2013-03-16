@@ -13,16 +13,70 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+Generic support for :ref:`mldbc`.
+
+This includes definition of *babel fields* in your Django Models 
+as well as methods to access these fields.
+
+Babel fields are fields defined using 
+:class:`BabelCharField`
+or
+:class:`BabelTextField`.
+
+Each babel field generates a series of normal CharFields (or TextFields) 
+depending on your :attr:`languages <north.Site.languages>` setting.
+
+Example::
+
+  class Foo(models.Model):
+      name = BabelCharField(_("Foo"), max_length=200)
+      
+      
+This module also defines the model mixin :class:`BabelNamed`
+      
 
 """
 
 from __future__ import unicode_literals
 
-#~ import logging
-#~ logger = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger(__name__)
+
+import sys
+import locale
+import datetime
+
+from babel.dates import format_date as babel_format_date
 
 from django.db import models
 from django.conf import settings
+
+
+from django.db import models
+from django.conf import settings
+from django.template import defaultfilters
+from django.utils import translation
+from django.utils.translation import get_language
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
+
+import north
+
+LANGUAGE_CODE_MAX_LENGTH = 5
+
+
+#~ dtos = settings.SITE.dtos
+#~ dtosl = settings.SITE.dtosl
+#~ set_language = settings.SITE.set_language
+kw2fields = settings.SITE.kw2fields
+babel_values = settings.SITE.kw2fields # backwards compat
+babelattr = settings.SITE.babelattr
+babelitem = settings.SITE.babelitem
+#~ getattr_lang = babelattr
+    
+
+
+
 
 
 class UnresolvedModel:
@@ -130,3 +184,170 @@ def old_resolve_model(model_spec,app_label=None,strict=False):
     return model
     
 
+def monthname(n):
+    d = datetime.date(2013,n,1)
+    return defaultfilters.date(d,'F')
+
+def dtomy(d):
+    """
+    "date to month/year" :
+    return the specified date as a localized string of type 'June 2011'."""
+    if d is None: return ''
+    return defaultfilters.date(d,'F Y')
+
+
+
+def contribute_to_class(field,cls,fieldclass,**kw):
+    if cls._meta.abstract:
+        return
+    kw.update(blank=True)
+    for lang in settings.SITE.BABEL_LANGS:
+        kw.update(verbose_name=string_concat(field.verbose_name,' ('+lang.django_code+')'))
+        newfield = fieldclass(**kw)
+        #~ newfield._lino_babel_field = True 
+        newfield._lino_babel_field = field.name # used by dbtools.get_data_elems
+        cls.add_to_class(field.name + '_' + lang.name,newfield)
+
+class BabelCharField(models.CharField):
+    """
+    Define a variable number of clones of the "master" field, 
+    one for each language of your :attr:`djangosite.Site.languages`.
+    """
+        
+    def contribute_to_class(self, cls, name):
+        super(BabelCharField,self).contribute_to_class(cls, name)
+        contribute_to_class(self,cls,models.CharField,
+            max_length=self.max_length)
+        #~ kw = dict()
+        #~ kw.update(max_length=self.max_length)
+        #~ kw.update(blank=True)
+        #~ for lang in BABEL_LANGS:
+            #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
+            #~ newfield = models.CharField(**kw)
+            #~ newfield._lino_babel_field = True # used by dbtools.get_data_elems
+            #~ cls.add_to_class(self.name + '_' + lang,newfield)
+            
+
+class BabelTextField(models.TextField):
+    """
+    Define a variable number of clones of the "master" field, 
+    one for each babel language.
+    """
+    def contribute_to_class(self, cls, name):
+        super(BabelTextField,self).contribute_to_class(cls, name)
+        contribute_to_class(self,cls,models.TextField)
+
+
+                
+class BabelNamed(models.Model):
+    """
+    Mixin for models that have a babel field `name` 
+    (labelled "Description") for each language.
+    """
+    
+    class Meta:
+        abstract = True
+        
+    name = BabelCharField(max_length=200,verbose_name=_("Designation"))
+    
+    def __unicode__(self):
+        return babelattr(self,'name')
+    
+            
+                
+class LanguageField(models.CharField):
+    """
+    A field that lets the user select 
+    a language from the available babel languages.
+    """
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            verbose_name=_("Language"),
+            choices=iter(settings.SITE.LANGUAGE_CHOICES),
+            default=settings.SITE.DEFAULT_LANGUAGE.django_code,
+            #~ default=get_language,
+            max_length=LANGUAGE_CODE_MAX_LENGTH,
+            )
+        defaults.update(kw)
+        models.CharField.__init__(self,*args, **defaults)
+
+                
+def run_with_language(lang,func):                
+    """
+    Selects the specified language `lang`, 
+    calls the specified functon `func`,
+    restores the previously selected language.
+    """
+    current_lang = get_language()
+    set_language(lang)
+    try:
+        rv = func()
+    except Exception:
+        set_language(current_lang)
+        raise
+    set_language(current_lang)
+    return rv
+                
+                
+LOOKUP_OP = '__iexact'
+
+def lookup_filter(fieldname,value,**kw):
+    """
+    Return a `models.Q` to be used if you want to search for a given 
+    string in any of the languages for the given babel field.
+    """
+    kw[fieldname+LOOKUP_OP] = value
+    #~ kw[fieldname] = value
+    flt = models.Q(**kw)
+    del kw[fieldname+LOOKUP_OP]
+    for lng in settings.SITE.BABEL_LANGS:
+        kw[fieldname+lng.suffix+LOOKUP_OP] = value
+        #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
+        #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})
+        flt = flt | models.Q(**kw)
+        del kw[fieldname+lng.suffix+LOOKUP_OP]
+    return flt
+
+
+    
+def set_language(lang=None):
+    """
+    Thin wrapper around `django.utils.translation`.
+    Activate the given language, or deactivate translations if 
+    the given language is `None` or `'en-us'`.
+    """
+    #~ from django.utils import translation
+    #~ li = self.get_language_info(code)
+    #~ if li is None: or li.index == 0:
+        #~ translation.deactivate()
+    #~ print "20111111 babel.set_language()", lang
+    #~ if lang is None or lang == DEFAULT_LANGUAGE:
+    #~ if lang is not None:
+        #~ if not lang in settings.SITE.AVAILABLE_LANGUAGES:
+            #~ raise Exception("Invalid language %r" % lang)
+    
+    if lang is None or lang == north.DJANGO_DEFAULT_LANGUAGE:
+        #~ locale.setlocale(locale.LC_ALL,'')
+        translation.deactivate()
+    else:
+        north.assert_django_code(lang)
+        translation.activate(lang)
+        
+
+    
+                        
+
+def format_date(d,format='medium'):
+    return babel_format_date(d, format=format,
+        locale=north.to_locale(translation.get_language()))
+    
+def dtos(d):
+    return format_date(d, format='short')
+    
+def dtosm(d):
+    return format_date(d)
+        
+def dtosl(d):
+    return format_date(d, format='full')
+    
+        
