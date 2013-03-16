@@ -146,7 +146,7 @@ from __future__ import unicode_literals
             self.stream.write('from datetime import time,date\n')
             #~ self.stream.write('from north import dbutils\n')
             self.stream.write('from north.dpy import create_mti_child\n')
-            self.stream.write('from north.utils import resolve_model\n')
+            self.stream.write('from north.dbutils import resolve_model\n')
             self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
             self.stream.write('from django.conf import settings\n')
             self.stream.write('''
