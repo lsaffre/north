@@ -1,0 +1,27 @@
+==========================
+Version 0.1.0
+==========================
+
+20130317 (Sunday, 17 March 2013)
+
+I am pleased to announce the release of 
+version 0.1.0 of `North <http://north.lino-framework.org>`__.
+
+Luc Saffre
+
+List of changes
+===============
+
+New features
+------------
+
+Optimizations
+-------------
+
+Bugfixes
+--------
+
+Manual tasks after upgrade
+--------------------------
+
+

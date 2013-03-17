@@ -16,6 +16,7 @@ Older releases
    :glob:
 
    0.0.?
+   0.1.?
 
 
 
