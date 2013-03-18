@@ -132,15 +132,15 @@ class Serializer(base.Serializer):
             
             self.stream.write('''\
 """
-This is a `Python dump <http://north.lino-framework.org>`_.
-
-''')
-            self.stream.write(settings.SITE.welcome_text())
+This is a `Python dump <http://north.lino-framework.org>`_
+created using %s.
+''' % settings.SITE.using_text())
+            #~ self.stream.write(settings.SITE.welcome_text())
             self.stream.write('''
 """
 from __future__ import unicode_literals
 ''')
-            self.stream.write('SOURCE_VERSION = %r\n' % current_version)
+            self.stream.write('SOURCE_VERSION = %r\n' % str(current_version))
             self.stream.write('from decimal import Decimal\n')
             self.stream.write('from datetime import datetime as dt\n')
             self.stream.write('from datetime import time,date\n')

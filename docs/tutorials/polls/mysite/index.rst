@@ -1,5 +1,7 @@
-The UI-less Lino Polls tutorial 
-===============================
+.. _north.tutorial.polls:
+
+The North Polls tutorial 
+=========================
 
 This tutorial explains how North can be added to an 
 existing Django site.
@@ -12,12 +14,12 @@ We are going to turn the resulting
 application into a North application.
 
 Let's look together at the files under 
-:srcref:`lino/projects/uiless`.
+:file:`/docs/tutorials/polls` of the North code repository.
 After the Django polls tutorial series,
 we've added only a few minor things:
 
-(1) In :srcref:`settings.py <lino/projects/uiless/mysite/settings.py>`,
-a line at the beginning of the file to instantiate our :setting:`LINO`::
+(1) In :file:`settings.py`,
+a line at the beginning of the file to instantiate our :setting:`SITE`::
 ::
 
     import north; 
@@ -31,7 +33,7 @@ Then we add a "djangosite" entry to :setting:`INSTALLED_APPS`::
   )
   
 Note that "'djangosite'" must be the **last entry** of your 
-:setting:`INSTALLED_APPS` because the only thing it does 
+:setting:`INSTALLED_APPS`. That's because the only thing it does 
 is to call :meth:`settings.SITE.startup <djangosite.Site.startup>`
 
 And finally declare a local fixture directory::
@@ -39,9 +41,7 @@ And finally declare a local fixture directory::
   FIXTURE_DIRS = ['fixtures']
 
 
-(2) A file 
-:srcref:`polls/fixtures/demo.py
-<docs/tutorials/polls/fixtures/demo.py>`,
+(2) A file :file:`polls/fixtures/demo.py`,
 a simple example of a Python fixture providing 
 demo data for our application:
 

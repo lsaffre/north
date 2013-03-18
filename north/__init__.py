@@ -91,6 +91,12 @@ class Site(Site):
     """
     Extends :class:`djangosite.Site`
     by adding some attributes and methods used by `north`.
+    
+    Instantiating a North Site will automatically set default values for 
+    Django's :setting:`SERIALIZATION_MODULES`
+    :setting:`FIXTURE_DIRS`
+    settings.
+    
     """
     
     demo_fixtures = ['std','demo']
@@ -98,6 +104,15 @@ class Site(Site):
     The list of fixtures to be loaded by the 
     `initdb_demo <lino.management.commands.initdb_demo>`
     command.
+    """
+    
+    is_local_project_dir = False
+    """
+    This is automatically set when a :class:`Lino` is instantiated. 
+    Don't override it.
+    Contains `True` if this is a "local" project.
+    For local projects, Lino checks for local fixtures and config directories
+    and adds them to the default settings.
     """
     
     migration_module = None
@@ -153,11 +168,31 @@ class Site(Site):
         self.apply_languages()
     
     
-    def init_nolocal(self,*args):
-        super(Site,self).init_nolocal(*args)
+    def init_before_local(self,*args):
+        super(Site,self).init_before_local(*args)
         self.update_settings(SERIALIZATION_MODULES = {
             "py" : "north.dpy",
         })
+        
+        modname = self.__module__
+        i = modname.rfind('.')
+        if i != -1:
+            modname = modname[:i]
+        self.is_local_project_dir = not modname in self.user_apps
+        
+        lst = []
+        for p in self.get_settings_subdirs('fixtures'):
+            if not os.path.exists(os.path.join(p,'..','models.py')):
+                lst.append(p.replace(os.sep,"/"))
+        self.update_settings(FIXTURE_DIRS=lst)
+            
+        #~ if not self.is_local_project_dir:
+            #~ self.update_settings(
+                #~ FIXTURE_DIRS = tuple(self.get_settings_subdirs('fixtures')))
+            #~ pth = join(self.project_dir,'fixtures')
+            #~ if isdir(pth):
+                #~ self.update_settings(FIXTURE_DIRS = [pth])
+                
         
         
     def install_migrations(self,*args):
@@ -183,11 +218,10 @@ class Site(Site):
         >>> from north import TestSite as Site
         >>> from pprint import pprint
         >>> pprint(Site().django_settings) #doctest: +ELLIPSIS
-        {'DATABASES': {u'default': {u'ENGINE': u'django.db.backends.sqlite3',
-                                    u'NAME': u'...default.db'}},
-         'FORMAT_MODULE_PATH': u'djangosite.formats',
-         'INSTALLED_APPS': (u'djangosite',),
-         'LONG_DATE_FORMAT': u'l, F j, Y',
+        {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
+                                   'NAME': '...default.db'}},
+         'FIXTURE_DIRS': [],
+         'INSTALLED_APPS': ('djangosite',),
          'SERIALIZATION_MODULES': {'py': 'north.dpy'}}
      
         >>> pprint(Site(languages="en fr de").languages)
