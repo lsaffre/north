@@ -54,11 +54,13 @@ from django.conf import settings
 
 from django.db import models
 from django.conf import settings
-from django.template import defaultfilters
 from django.utils import translation
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+
+from djangosite.dbutils import monthname
+from djangosite.dbutils import dtomy
 
 import north
 
@@ -184,18 +186,6 @@ def old_resolve_model(model_spec,app_label=None,strict=False):
         return UnresolvedModel(model_spec,app_label)
     return model
     
-
-def monthname(n):
-    d = datetime.date(2013,n,1)
-    return defaultfilters.date(d,'F')
-
-def dtomy(d):
-    """
-    "date to month/year" :
-    return the specified date as a localized string of type 'June 2011'."""
-    if d is None: return ''
-    return defaultfilters.date(d,'F Y')
-
 
 
 def contribute_to_class(field,cls,fieldclass,**kw):
