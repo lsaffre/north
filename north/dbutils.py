@@ -234,6 +234,8 @@ class BabelNamed(models.Model):
     """
     Mixin for models that have a babel field `name` 
     (labelled "Description") for each language.
+    
+    See usage example in :ref:`mldbc_tutorial`.
     """
     
     class Meta:

@@ -1,0 +1,22 @@
+==========================
+Version 0.1.1
+==========================
+
+20130321 (Thursday, 21 March 2013)
+
+List of changes
+===============
+
+New features
+------------
+
+Optimizations
+-------------
+
+Bugfixes
+--------
+
+Manual tasks after upgrade
+--------------------------
+
+

@@ -636,6 +636,7 @@ See <https://code.djangoproject.com/ticket/18213>.
             Don't raise an exception. The unsaved instances got lost and 
             the loaddata should be done again, but meanwhile the database
             is not necessarily invalid and may be used for further testing.
+            And anyway, loaddata would catch it and still continue.
             """
             #~ raise Exception(msg)
             

@@ -254,6 +254,10 @@ class Site(Site):
         
         """
         
+        if isinstance(self.languages,tuple) and isinstance(self.languages[0],LanguageInfo):
+            # e.g. override_defaults() has been called explicitly, without specifying a languages keyword.
+            return 
+            
         self.language_dict = dict() # maps simple_code -> LanguageInfo
         
         self.LANGUAGE_CHOICES = []
