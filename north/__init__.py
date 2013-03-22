@@ -482,7 +482,39 @@ class Site(Site):
         return kw
             
 
-    def field2kw(self,obj,name):
+    def field2kw(self,obj,name,**known_values):
+        """
+        Examples:
+        
+        >>> from north import TestSite as Site
+        >>> from north.dbutils import set_language
+        >>> from djangosite.utils import AttrDict
+        >>> def testit(site_languages):
+        ...     site = Site(languages=site_languages)
+        ...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))
+        ...     return site,obj
+        
+        
+        >>> site,obj = testit('de en')
+        >>> site.field2kw(obj,'name')
+        {'de': 'Hallo', 'en': 'Hello'}
+        
+        >>> site,obj = testit('fr et')
+        >>> site.field2kw(obj,'name')
+        {'fr': 'Salut'}
+        
+        
+        """
+        #~ d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
+        for lng in self.languages:
+            v = getattr(obj,name+lng.suffix)
+            if v:
+                known_values[lng.name] = v
+        return known_values
+        
+    def unused_field2kw(self,obj,name):
+        """
+        """
         d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lang in self.BABEL_LANGS:
             v = getattr(obj,name+lang.suffix)

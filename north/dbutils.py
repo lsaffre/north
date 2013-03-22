@@ -72,6 +72,7 @@ LANGUAGE_CODE_MAX_LENGTH = 5
 #~ set_language = settings.SITE.set_language
 #~ kw2fields = settings.SITE.kw2fields
 babelkw = settings.SITE.babelkw
+field2kw = settings.SITE.field2kw
 babel_values = settings.SITE.babelkw # old alias for backwards compatibility
 babelattr = settings.SITE.babelattr
 babelitem = settings.SITE.babelitem
