@@ -180,11 +180,17 @@ class Site(Site):
             modname = modname[:i]
         self.is_local_project_dir = not modname in self.user_apps
         
-        lst = []
-        for p in self.get_settings_subdirs('fixtures'):
-            if not os.path.exists(os.path.join(p,'..','models.py')):
-                lst.append(p.replace(os.sep,"/"))
-        self.update_settings(FIXTURE_DIRS=lst)
+        
+        
+        def settings_subdirs(name):
+            lst = []
+            for p in self.get_settings_subdirs(name):
+                if not os.path.exists(os.path.join(p,'..','models.py')):
+                    lst.append(p.replace(os.sep,"/"))
+            return lst
+        
+        self.update_settings(FIXTURE_DIRS=tuple(settings_subdirs('fixtures')))
+        self.update_settings(LOCALE_PATHS=tuple(settings_subdirs('locale')))
             
         #~ if not self.is_local_project_dir:
             #~ self.update_settings(
@@ -220,8 +226,9 @@ class Site(Site):
         >>> pprint(Site().django_settings) #doctest: +ELLIPSIS
         {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
                                    'NAME': '...default.db'}},
-         'FIXTURE_DIRS': [],
+         'FIXTURE_DIRS': (),
          'INSTALLED_APPS': ('djangosite',),
+         'LOCALE_PATHS': (),
          'SERIALIZATION_MODULES': {'py': 'north.dpy'}}
      
         >>> pprint(Site(languages="en fr de").languages)
