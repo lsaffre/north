@@ -203,14 +203,19 @@ class Site(Site):
         
     def install_migrations(self,*args):
         """
-        See :func:`lino.utils.dumpy.install_migrations`.
+        See :func:`north.dpy.install_migrations`.
         """
         from .dpy import install_migrations
         install_migrations(self,*args)
         
           
     def using(self,ui=None):
+        """
+        
+        """
         for u in super(Site,self).using(ui): yield u
+        import babel
+        yield ("Babel",babel.__version__,"http://babel.edgewall.org/")
         yield (SETUP_INFO['name'],SETUP_INFO['version'],SETUP_INFO['url'])
         
    
