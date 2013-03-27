@@ -125,7 +125,8 @@ class Serializer(base.Serializer):
         self.use_natural_keys = options.get("use_natural_keys", False)
         if self.write_preamble:
             self.stream.write('# -*- coding: UTF-8 -*-\n')
-            name,current_version,url = settings.SITE.using().next()
+            #~ name,current_version,url = settings.SITE.using().next()
+            current_version = settings.SITE.version
             if '+' in current_version:
                 logger.warning(
                     "Dumpdata from intermediate version %s" % current_version)
