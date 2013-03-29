@@ -22,8 +22,8 @@ Basic usage in your `settings.py` file is::
   SITE = Site(__file__,globals(),'myapp1','myapp2',...)
   # your settings here
       
-See the `Usage <http://site.lino-framework.org/usage.html>` page
-for `django-site` which applies entirely for a `North` site.
+See the `Usage <http://site.lino-framework.org/usage.html>`_ page
+for `djangosite` which applies entirely for a `North` site.
 
 North works by adding a new serialization format "py" 
 to Django's `SERIALIZATION_MODULES` setting.
@@ -35,5 +35,6 @@ Django's `dump` command::
 Instantiating a North Site will install sensible default values 
 for certain Django settings, including `INSTALLED_APPS` and 
 `SERIALIZATION_MODULES`.
+
 
 Read more on http://north.lino-framework.org
