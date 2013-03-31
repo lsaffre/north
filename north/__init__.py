@@ -1,5 +1,6 @@
 """
-
+:copyright: Copyright 2013 by Luc Saffre.
+:license: BSD, see LICENSE for more details.
 """
 
 import os

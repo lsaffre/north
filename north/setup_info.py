@@ -1,3 +1,8 @@
+"""
+:copyright: Copyright 2013 by Luc Saffre.
+:license: BSD, see LICENSE for more details.
+"""
+
 SETUP_INFO = dict(
   version = '0.1.1',
   install_requires = ['djangosite==0.1.1','Babel'],
