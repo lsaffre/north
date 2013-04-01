@@ -5,7 +5,7 @@
 
 import os
 
-from djangosite import Site
+from djangosite import Site, DJANGO_DEFAULT_LANGUAGE, assert_django_code
 #~ from north.babel import BabelSiteMixin
 #~ from north.babel import Site
 
@@ -63,7 +63,6 @@ LanguageInfo = collections.namedtuple('LanguageInfo', ('django_code','name','ind
 
 
 
-DJANGO_DEFAULT_LANGUAGE = 'en-us'
 gettext_noop = lambda s: s
 
 def to_locale(language):
@@ -81,11 +80,6 @@ def to_locale(language):
         return language[:p].lower()+'_'+language[p+1:].upper()
     else:
         return language.lower() 
-        
-def assert_django_code(django_code):
-    if '_' in django_code:
-        raise Exception("Invalid language code %r. "
-            "Use values like 'en' or 'en-us'." % django_code)
         
 
 class Site(Site):

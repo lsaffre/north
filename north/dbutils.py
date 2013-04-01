@@ -50,7 +50,7 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from djangosite.dbutils import monthname
+from djangosite.dbutils import monthname, set_language
 from djangosite.dbutils import dtomy
 
 import north
@@ -293,32 +293,7 @@ def lookup_filter(fieldname,value,**kw):
         del kw[fieldname+lng.suffix+LOOKUP_OP]
     return flt
 
-
     
-def set_language(lang=None):
-    """
-    Thin wrapper around `django.utils.translation`.
-    Activate the given language, or deactivate translations if 
-    the given language is `None` or `'en-us'`.
-    """
-    #~ from django.utils import translation
-    #~ li = self.get_language_info(code)
-    #~ if li is None: or li.index == 0:
-        #~ translation.deactivate()
-    #~ print "20111111 babel.set_language()", lang
-    #~ if lang is None or lang == DEFAULT_LANGUAGE:
-    #~ if lang is not None:
-        #~ if not lang in settings.SITE.AVAILABLE_LANGUAGES:
-            #~ raise Exception("Invalid language %r" % lang)
-    
-    if lang is None or lang == north.DJANGO_DEFAULT_LANGUAGE:
-        #~ locale.setlocale(locale.LC_ALL,'')
-        translation.deactivate()
-    else:
-        north.assert_django_code(lang)
-        translation.activate(lang)
-        
-
     
                         
 
