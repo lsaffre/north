@@ -1,7 +1,7 @@
 # Django settings for mysite project.
 
 import north
-SITE = north.Site(__file__,globals()) 
+SITE = north.Site(globals()) 
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

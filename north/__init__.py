@@ -175,8 +175,6 @@ class Site(Site):
             modname = modname[:i]
         self.is_local_project_dir = not modname in self.user_apps
         
-        
-        
         def settings_subdirs(name):
             lst = []
             for p in self.get_settings_subdirs(name):
@@ -229,7 +227,8 @@ class Site(Site):
          'FIXTURE_DIRS': (),
          'INSTALLED_APPS': ('djangosite',),
          'LOCALE_PATHS': (),
-         'SERIALIZATION_MODULES': {'py': 'north.dpy'}}
+         'SERIALIZATION_MODULES': {'py': 'north.dpy'},
+         '__file__': '...'}
      
         >>> pprint(Site(languages="en fr de").languages)
         (LanguageInfo(django_code='en', name='en', index=0, suffix=''),
@@ -669,7 +668,8 @@ class TestSite(Site):
     """
     def __init__(self,*args,**kwargs):
         kwargs.update(no_local=True)
-        super(TestSite,self).__init__(__file__,{},*args,**kwargs)
+        g = dict(__file__=__file__)
+        super(TestSite,self).__init__(g,*args,**kwargs)
         
     #~ def run_djangosite_local(self):
         #~ pass
