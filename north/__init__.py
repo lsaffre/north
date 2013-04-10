@@ -227,6 +227,7 @@ class Site(Site):
          'FIXTURE_DIRS': (),
          'INSTALLED_APPS': ('djangosite',),
          'LOCALE_PATHS': (),
+         'SECRET_KEY': '20227',
          'SERIALIZATION_MODULES': {'py': 'north.dpy'},
          '__file__': '...'}
      
@@ -494,7 +495,7 @@ class Site(Site):
         
         >>> from north import TestSite as Site
         >>> from north.dbutils import set_language
-        >>> from djangosite.utils import AttrDict
+        >>> from atelier.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))
@@ -604,7 +605,7 @@ class Site(Site):
         
         >>> from north import TestSite as Site
         >>> from north.dbutils import set_language
-        >>> from djangosite.utils import AttrDict
+        >>> from atelier.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))

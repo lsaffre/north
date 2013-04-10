@@ -7,6 +7,7 @@ SETUP_INFO = dict(
   version = '0.1.1',
   install_requires = ['djangosite==0.1.1','Babel'],
   #~ name = 'django-north',
+  test_suite = 'tests',
   name = 'North',
   description = "Another way to migrate Django databases",
   #~ long_description=open('README.txt').read(),
@@ -45,7 +46,6 @@ for certain Django settings, including `INSTALLED_APPS` and
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
   url = "http://north.lino-framework.org",
-  #~ test_suite = 'lino.test_apps',
   classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2.6
