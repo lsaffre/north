@@ -1,7 +1,6 @@
 global-include *.txt *.py *.bat *.js *.css *.html \
-  *.ico *.jpg *.png \
+  *.ico *.png \
   Makefile
 prune docs
-prune htmlcov
 prune tmp
 

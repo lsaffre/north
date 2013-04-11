@@ -20,6 +20,9 @@ class BasicTests(BaseTestCase):
     def test_catalog(self): self.run_docs_django_tests('tutorials.catalog.settings')
     def test_polls(self): self.run_django_manage_test('docs/tutorials/polls')
 
+class PackagesTests(BaseTestCase):
+    def test_packages(self): self.run_packages_test(SETUP_INFO['packages'])
+
 
 #~ env.django_doctests.append('tutorials.catalog.settings')
 
