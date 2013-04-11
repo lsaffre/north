@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys, os
-from djangosite.utils.sphinxconf import configure
-configure(__file__,globals())
+from atelier.sphinxconf import configure
+configure(globals(),settings_module_name='settings')
 
 import north
 
