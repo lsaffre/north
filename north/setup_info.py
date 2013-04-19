@@ -4,8 +4,8 @@
 """
 
 SETUP_INFO = dict(
-  version = '0.1.1',
-  install_requires = ['djangosite==0.1.1','Babel'],
+  version = '0.1.2',
+  install_requires = ['djangosite==0.1.2','Babel'],
   #~ name = 'django-north',
   test_suite = 'tests',
   name = 'North',
