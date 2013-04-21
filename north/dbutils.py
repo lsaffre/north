@@ -298,6 +298,7 @@ def lookup_filter(fieldname,value,**kw):
                         
 
 def format_date(d,format='medium'):
+    if not d: return ''
     return babel_format_date(d, format=format,
         locale=north.to_locale(translation.get_language()))
     
