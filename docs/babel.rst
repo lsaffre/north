@@ -29,10 +29,13 @@ So they need a Products table like this:
   +--------------+------------------+-------------+-------+----+
 
 If your application is being used both in Canada and the US, 
-then your US clients don't want to have a "useless" column for the 
-French designation of their products.
+then your US customers don't want to have a "useless" column for the 
+French designation of their products. With North you can simply set 
+the :attr:`languages <north.Site.languages>` attribute 
+to `["en"]` for US customers and to `['en','fr']` 
+for Canadian customers.
 
 See also:
 
 - The :doc:`/tutorials/catalog/index` tutorial
-- The :attr:`languages <djangosite.Site.languages>` setting
+- The :attr:`languages <north.Site.languages>` setting

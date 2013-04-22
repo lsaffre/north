@@ -194,9 +194,9 @@ htmlhelp_basename = 'north'
 
 extlinks = {
   #~ 'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
-  'checkin': ('http://code.google.com/p/django_site/source/detail?r=%s', 'Checkin '),
-  'srcref': ('http://code.google.com/p/django_site/source/browse%s', ''),
-  'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
+  'checkin': ('http://code.google.com/p/django-north/source/detail?r=%s', 'Checkin '),
+  'srcref': ('http://code.google.com/p/django-north/source/browse%s', ''),
+  'djangoticket': ('https://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
     
 

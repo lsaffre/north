@@ -14,17 +14,15 @@ Welcome to the North project homepage.
 Related projects
 ----------------
 
-- North extends `django-site <http://site.lino-framework.org>`__  
+- North extends `djangosite <http://site.lino-framework.org>`__  
 
-- `Lino the framework <http://www.lino-framework.org>`__  
-  is based on North
+- `Lino <http://www.lino-framework.org>`__  is based on North.
   
 Contents
 --------
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
 
    dpy
    babel
