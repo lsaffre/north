@@ -12,8 +12,11 @@ The final truth about what's going on is only
  
 
 
-Version 0.1.2 (in development)
-==============================
+Version 0.1.3 (in development)
+============================================
+
+Version 0.1.2 (released :blogref:`20130422`)
+============================================
 
 - Moved the set_language function from north to djangosite because 
   it is used in :mod:`djangosite.utils.sphinxconf`.
