@@ -82,6 +82,9 @@ def to_locale(language):
         return language.lower() 
         
 
+class NOT_PROVIDED: pass
+
+
 class Site(Site):
     """
     Extends :class:`djangosite.Site`
@@ -589,7 +592,7 @@ class Site(Site):
             return self.babelitem(**v)
             
         
-    def babelattr(self,obj,attrname,*args):
+    def babelattr(self,obj,attrname,default=NOT_PROVIDED,language=None):
         """
         Return the value of the specified babel field `attrname` of `obj`
         in the current language.
@@ -638,13 +641,18 @@ class Site(Site):
         'Hello'
         
         """
-        from django.utils import translation
-        info = self.language_dict.get(translation.get_language(),self.DEFAULT_LANGUAGE)
+        if language is None:
+            from django.utils import translation
+            language = translation.get_language()
+        info = self.language_dict.get(language,self.DEFAULT_LANGUAGE)
         if info.index != 0:
             v = getattr(obj,attrname+info.suffix,None)
             if v: 
                 return v
-        return getattr(obj,attrname,*args)
+        if default is NOT_PROVIDED:
+            return getattr(obj,attrname)
+        else:
+            return getattr(obj,attrname,default)
         #~ if lang is not None and lang != self.DEFAULT_LANGUAGE:
             #~ v = getattr(obj,attrname+"_"+lang,None)
             #~ if v:
