@@ -212,7 +212,7 @@ class Site(Site):
         for u in super(Site,self).using(ui): yield u
         import babel
         yield ("Babel",babel.__version__,"http://babel.edgewall.org/")
-        yield (SETUP_INFO['name'],SETUP_INFO['version'],SETUP_INFO['url'])
+        #~ yield (SETUP_INFO['name'],SETUP_INFO['version'],SETUP_INFO['url'])
         
    
     def apply_languages(self):

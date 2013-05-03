@@ -491,7 +491,7 @@ class FakeDeserializedObject(base.DeserializedObject):
 class FlushDeferredObjects: 
     """
     Indicator class object. 
-    Fixture may yield a ``dumpy.FlushDeferredObjects`` 
+    Fixture may yield a `FlushDeferredObjects` 
     to indicate that all deferred objects should get saved before going on.
     """
     pass
