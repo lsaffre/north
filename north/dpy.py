@@ -624,7 +624,7 @@ See <https://code.djangoproject.com/ticket/18213>.
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
-                count,fp.name,s)
+                count,module.__name__,s)
             logger.warning(msg)
             """
             Don't raise an exception. The unsaved instances got lost and 
