@@ -9,11 +9,13 @@ to get detailed news.
 The final truth about what's going on is only 
 `The Source Code <http://code.google.com/p/django-north/source/list>`_
 (hosted on `Googlecode <http://code.google.com/p/django-north>`__).
- 
 
-
-Version 0.1.3 (in development)
+Version 0.1.3 (released :blogref:`20130505`)
 ============================================
+
+- When loading a dump which ended with a Warning "Abandoning with x 
+  unsaved instances from ...", user got a traceback instead of the 
+  warning.
 
 Version 0.1.2 (released :blogref:`20130422`)
 ============================================
