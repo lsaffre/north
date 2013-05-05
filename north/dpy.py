@@ -602,7 +602,7 @@ class DpyDeserializer:
 Fixture %s decided to not create any object.
 We're sorry, but Django doesn't like that. 
 See <https://code.djangoproject.com/ticket/18213>.
-""" % fp.name)
+""" % module.__name__)
           
         #~ logger.info("Saved %d instances from %s.",self.saved,fp.name)
         
