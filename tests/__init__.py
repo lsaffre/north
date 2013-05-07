@@ -5,10 +5,11 @@ ROOTDIR = Path(__file__).parent.parent
 # load  SETUP_INFO:
 execfile(ROOTDIR.child('north','setup_info.py'),globals())
 
-from atelier.test import SubProcessTestCase
+from djangosite.utils.pythontest import TestCase
 
-class BaseTestCase(SubProcessTestCase):
-    default_environ = dict(DJANGO_SETTINGS_MODULE="lino.projects.std.settings")
+class BaseTestCase(TestCase):
+    demo_settings_module = "north.demo.settings" 
+    #~ default_environ = dict(DJANGO_SETTINGS_MODULE="lino.projects.std.settings")
     project_root = ROOTDIR
     
 class BasicTests(BaseTestCase):

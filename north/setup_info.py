@@ -4,11 +4,10 @@
 """
 
 SETUP_INFO = dict(
-  version = '0.1.3',
-  install_requires = ['djangosite==0.1.3','Babel'],
-  #~ name = 'django-north',
-  test_suite = 'tests',
   name = 'North',
+  version = '0.1.4',
+  install_requires = ['djangosite==0.1.4','Babel'],
+  test_suite = 'tests',
   description = "Another way to migrate Django databases",
   #~ long_description=open('README.txt').read(),
   long_description="""\
@@ -42,7 +41,7 @@ for certain Django settings, including `INSTALLED_APPS` and
 `SERIALIZATION_MODULES`.
 """,
   license = 'Free BSD',
-  packages = ['north'],
+  packages = ['north','north.demo'],
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
   url = "http://north.lino-framework.org",

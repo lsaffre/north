@@ -10,6 +10,13 @@ The final truth about what's going on is only
 `The Source Code <http://code.google.com/p/django-north/source/list>`_
 (hosted on `Googlecode <http://code.google.com/p/django-north>`__).
 
+Version 0.1.4 (in development)
+============================================
+
+- Adapted test suite to changes in atelier and djangosite.
+  Added :mod:`north.demo.settings` to remove depüendency from Lino.
+
+
 Version 0.1.3 (released :blogref:`20130505`)
 ============================================
 

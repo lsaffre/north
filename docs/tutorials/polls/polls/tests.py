@@ -108,7 +108,6 @@ class PollViewTests(TestCase):
         )    
         
         
-#~ from djangosite.utils.test import DocTest
 
 class NorthTests(TestCase):
     fixtures = ['demo']
