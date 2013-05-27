@@ -5,8 +5,8 @@
 
 SETUP_INFO = dict(
   name = 'North',
-  version = '0.1.4',
-  install_requires = ['djangosite==0.1.4','Babel'],
+  version = '0.1.5',
+  install_requires = ['djangosite==0.1.5','Babel'],
   test_suite = 'tests',
   description = "Another way to migrate Django databases",
   #~ long_description=open('README.txt').read(),
