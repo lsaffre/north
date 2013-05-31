@@ -311,4 +311,6 @@ def dtosm(d):
 def dtosl(d):
     return format_date(d, format='full')
     
-        
+def day_and_month(d):
+    return format_date(d,"dd. MMMM")
+    
