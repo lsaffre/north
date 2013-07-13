@@ -162,11 +162,6 @@ class Site(Site):
     BABEL_LANGS = tuple()
     
     
-    def override_defaults(self,**kwargs):
-        super(Site,self).override_defaults(**kwargs)
-        self.apply_languages()
-    
-    
     def init_before_local(self,*args):
         super(Site,self).init_before_local(*args)
         self.update_settings(SERIALIZATION_MODULES = {
@@ -197,7 +192,11 @@ class Site(Site):
                 #~ self.update_settings(FIXTURE_DIRS = [pth])
                 
         
-        
+    def override_defaults(self,**kwargs):
+        super(Site,self).override_defaults(**kwargs)
+        self.apply_languages()
+    
+    
     def install_migrations(self,*args):
         """
         See :func:`north.dpy.install_migrations`.
