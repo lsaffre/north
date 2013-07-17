@@ -98,13 +98,6 @@ class Site(Site):
     
     """
     
-    demo_fixtures = ['std','demo']
-    """
-    The list of fixtures to be loaded by the 
-    `initdb_demo <lino.management.commands.initdb_demo>`
-    command.
-    """
-    
     is_local_project_dir = False
     """
     This is automatically set when a :class:`Lino` is instantiated. 
