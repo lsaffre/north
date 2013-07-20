@@ -19,24 +19,21 @@ in one or several tables) which can be loaded into a database.
 Read more about fixtures in the `Providing initial data for models
 <https://docs.djangoproject.com/en/dev/howto/initial-data/>`_
 article of the Django documentation.
-This articla also says that "fixtures can be written as XML, YAML, 
+This article also says that "fixtures can be written as XML, YAML, 
 or JSON documents". 
 North adds another format to this list: Python. 
 
 
-A Python fixture is a database fixture which is not in XML, YAML 
-or JSON but in Python.
-It is syntactically a normal Python module,
-stored in a file ending with `.py`
-Django will associate the `.py` ending to 
-the North deserializer through its
-`SERIALIZATION_MODULES 
-<https://docs.djangoproject.com/en/dev/ref/settings/#serialization-modules>`_
-setting.
-It is designed to be imported and exectued 
-during Django's 
+A Python fixture is syntactically a normal Python module,
+stored in a file ending with `.py` and
+designed to being imported and exectued during Django's 
 `loaddata <https://docs.djangoproject.com/en/dev/ref/django-admin/#django-admin-loaddata>`_ 
 command.
+Django will associate the `.py` ending to 
+the North deserializer because your
+`SERIALIZATION_MODULES 
+<https://docs.djangoproject.com/en/dev/ref/settings/#serialization-modules>`_
+setting contains `{"py" : "north.dpy"}`.
 
 The North deserializer expects every Python fixture to define 
 a global function `objects` which it expects to return 
