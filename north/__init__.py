@@ -223,7 +223,6 @@ class Site(Site):
                                    'NAME': '...default.db'}},
          'FIXTURE_DIRS': (),
          'INSTALLED_APPS': ('djangosite',),
-         'LANGUAGE_CODE': 'en-us',
          'LOCALE_PATHS': (),
          'SECRET_KEY': '20227',
          'SERIALIZATION_MODULES': {'py': 'north.dpy'},
@@ -267,6 +266,7 @@ class Site(Site):
         
         self.LANGUAGE_CHOICES = []
         self.LANGUAGE_DICT = dict() # used in lino.modlib.users
+        must_set_language_code = False
         
         #~ self.AVAILABLE_LANGUAGES = (to_locale(self.DEFAULT_LANGUAGE),)
         if self.languages is None:
@@ -286,6 +286,7 @@ class Site(Site):
             #~ self.update_settings(LANGUAGE_CODE = lc[0][0])
             #~ self.update_settings(LANGUAGE_CODE = self.languages[0])
             self.update_settings(USE_L10N = True)
+            must_set_language_code = True
           
         languages = []
         for i,django_code in enumerate(self.languages):
@@ -325,12 +326,15 @@ class Site(Site):
         self.BABEL_LANGS = tuple(self.languages[1:])
         #~ self.AVAILABLE_LANGUAGES = self.AVAILABLE_LANGUAGES + self.BABEL_LANGS
                     
-        self.update_settings(LANGUAGE_CODE = self.get_default_language())
+        if must_set_language_code:
+            self.update_settings(LANGUAGE_CODE = self.get_default_language())
         #~ self.update_settings(LANGUAGE_CODE = self.languages[0].django_code)
                     
 
     def do_site_startup(self):
-      
+        """
+        Called by :meth:`djangosite.Site.startup`.
+        """
         super(Site,self).do_site_startup()
         
         from django.conf import settings
