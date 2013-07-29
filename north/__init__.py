@@ -424,15 +424,17 @@ class Site(Site):
         This is used by `UserProfile`.
         
         Examples:
+        
         >>> from north import TestSite as Site
         >>> lst = Site(languages="en fr de nl et pt").resolve_languages('en fr')
-        >>> [i.django_code for i in lst]
+        >>> [i.name for i in lst]
         ['en', 'fr']
         
         You may not specify languages which don't exist on this site:
+        
         >>> Site(languages="en fr de").resolve_languages('en nl')
         Traceback (most recent call last):
-          ...
+        ...
         Exception: Unknown language code 'nl' (must be one of ['en', 'fr', 'de'])
         
         
