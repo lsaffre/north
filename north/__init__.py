@@ -223,6 +223,7 @@ class Site(Site):
                                    'NAME': '...default.db'}},
          'FIXTURE_DIRS': (),
          'INSTALLED_APPS': ('djangosite',),
+         'LANGUAGE_CODE': 'en-us',
          'LOCALE_PATHS': (),
          'SECRET_KEY': '20227',
          'SERIALIZATION_MODULES': {'py': 'north.dpy'},
@@ -283,7 +284,7 @@ class Site(Site):
             #~ lc = language_choices(*self._languages)
             #~ self.update_settings(LANGUAGES = lc)
             #~ self.update_settings(LANGUAGE_CODE = lc[0][0])
-            self.update_settings(LANGUAGE_CODE = self.languages[0])
+            #~ self.update_settings(LANGUAGE_CODE = self.languages[0])
             self.update_settings(USE_L10N = True)
           
         languages = []
@@ -323,8 +324,9 @@ class Site(Site):
         #~ self.BABEL_LANGS = tuple([to_locale(code) for code in self.languages[1:]])
         self.BABEL_LANGS = tuple(self.languages[1:])
         #~ self.AVAILABLE_LANGUAGES = self.AVAILABLE_LANGUAGES + self.BABEL_LANGS
-            
                     
+        self.update_settings(LANGUAGE_CODE = self.get_default_language())
+        #~ self.update_settings(LANGUAGE_CODE = self.languages[0].django_code)
                     
 
     def do_site_startup(self):
@@ -333,6 +335,7 @@ class Site(Site):
         
         from django.conf import settings
         from django.utils.translation import ugettext_lazy as _
+        from north.dbutils import set_language
         
         def langtext(code):
             for k,v in settings.LANGUAGES:
@@ -374,6 +377,10 @@ class Site(Site):
                 text = _(text)
                 _add_language(lang.django_code,text)
                 
+            """
+            Activate the site's default language
+            """
+            set_language(self.get_default_language())
 
     def get_language_info(self,code):
         """
@@ -408,14 +415,51 @@ class Site(Site):
         #~ """
         #~ return self.DEFAULT_LANGUAGE
         
+    def resolve_languages(self,languages):
+        """
+        This is used by `UserProfile`.
         
+        Examples:
+        >>> from north import TestSite as Site
+        >>> lst = Site(languages="en fr de nl et pt").resolve_languages('en fr')
+        >>> [i.django_code for i in lst]
+        ['en', 'fr']
+        
+        You may not specify languages which don't exist on this site:
+        >>> Site(languages="en fr de").resolve_languages('en nl')
+        Traceback (most recent call last):
+          ...
+        Exception: Unknown language code 'nl' (must be one of ['en', 'fr', 'de'])
+        
+        
+        """
+        rv = []
+        if isinstance(languages,basestring):
+            languages = languages.split()
+        for k in languages:
+            if isinstance(k,basestring):
+                li = self.get_language_info(k)
+                if li is None:
+                    raise Exception("Unknown language code %r (must be one of %s)" % (
+                        k,[li.name for li in self.languages]))
+                rv.append(li)
+            else:
+                assert k in self.languages
+                rv.append(k)
+        return tuple(rv)
+                
     def language_choices(self,language,choices):
         l = choices.get(language,None)
         if l is None:
             l = choices.get(self.DEFAULT_LANGUAGE)
         return l
-
-
+        
+    def get_default_language(self):
+        """
+        The default language to use in every `north.dbutils.LanguageField`.
+        """
+        return self.DEFAULT_LANGUAGE.django_code
+        
     
 
     def babelkw(self,name,**kw):
@@ -677,3 +721,4 @@ class TestSite(Site):
     #~ def run_djangosite_local(self):
         #~ pass
         
+

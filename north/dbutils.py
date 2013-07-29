@@ -189,6 +189,7 @@ def contribute_to_class(field,cls,fieldclass,**kw):
         newfield = fieldclass(**kw)
         #~ newfield._lino_babel_field = True 
         newfield._lino_babel_field = field.name # used by dbtools.get_data_elems
+        newfield._babel_language = lang 
         cls.add_to_class(field.name + '_' + lang.name,newfield)
 
 class BabelCharField(models.CharField):
@@ -249,7 +250,7 @@ class LanguageField(models.CharField):
         defaults = dict(
             verbose_name=_("Language"),
             choices=iter(settings.SITE.LANGUAGE_CHOICES),
-            default=settings.SITE.DEFAULT_LANGUAGE.django_code,
+            default=settings.SITE.get_default_language,
             #~ default=get_language,
             max_length=LANGUAGE_CODE_MAX_LENGTH,
             )

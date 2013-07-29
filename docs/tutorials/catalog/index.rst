@@ -93,7 +93,7 @@ You can use this also for languages that aren't on your site:
 
 >>> set_language('et')
 >>> print format_date(today,'full')
-reede, 18, jaanuar 2013
+reede, 18. jaanuar 2013
 
 >>> set_language('nl')
 >>> print format_date(today,'full')
