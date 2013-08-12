@@ -561,7 +561,7 @@ class Site(Site):
         """
         #~ d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lng in self.languages:
-            v = getattr(obj,name+lng.suffix)
+            v = getattr(obj,name+lng.suffix,None)
             if v:
                 known_values[lng.name] = v
         return known_values
