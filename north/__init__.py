@@ -156,6 +156,7 @@ class Site(Site):
     
     
     def init_before_local(self,*args):
+        args += ('north',)
         super(Site,self).init_before_local(*args)
         self.update_settings(SERIALIZATION_MODULES = {
             "py" : "north.dpy",
@@ -222,7 +223,7 @@ class Site(Site):
         {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
                                    'NAME': '...default.db'}},
          'FIXTURE_DIRS': (),
-         'INSTALLED_APPS': ('djangosite',),
+         'INSTALLED_APPS': ('north', 'djangosite'),
          'LOCALE_PATHS': (),
          'SECRET_KEY': '20227',
          'SERIALIZATION_MODULES': {'py': 'north.dpy'},
@@ -618,7 +619,6 @@ class Site(Site):
         
         >>> set_language('jp')
         >>> tr(en="Hello",de="Hallo",fr="Salut")
-        >>> tr(**kw)
         'Hallo'
         
         Another way is to specify an explicit default value using a
@@ -644,8 +644,8 @@ class Site(Site):
         >>> 
         """
         from django.utils import translation
-        info = self.language_dict.get(translation.get_language(),self.DEFAULT_LANGUAGE)
         if len(args) == 0:
+            info = self.language_dict.get(translation.get_language(),self.DEFAULT_LANGUAGE)
             default_value = None
             if info == self.DEFAULT_LANGUAGE:
                 return values.get(info.name)
@@ -654,11 +654,12 @@ class Site(Site):
                 return values.get(self.DEFAULT_LANGUAGE.name)
             return x
         elif len(args) == 1:
+            info = self.language_dict.get(translation.get_language(),None)
+            if info is None:
+                return args[0]
             default_value = args[0]
             return values.get(info.name,default_value)
-        else:
-            raise ValueError("%(values)s is more than 1 default value." % dict(values=args))
-        return x
+        raise ValueError("%(values)s is more than 1 default value." % dict(values=args))
         
     # babel_get(v) = babelitem(**v)
             

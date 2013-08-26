@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
+## Copyright 2009-2013 by Luc Saffre.
+## License: BSD, see file LICENSE for more details.
+
 """
 Documented in :ref:`dpy`.
-
-:copyright: Copyright 2009-2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
 
 """
 
@@ -117,13 +117,13 @@ class Serializer(base.Serializer):
         self.selected_fields = options.get("fields")
         self.use_natural_keys = options.get("use_natural_keys", False)
         if self.write_preamble:
-            self.stream.write('# -*- coding: UTF-8 -*-\n')
             #~ name,current_version,url = settings.SITE.using().next()
             current_version = settings.SITE.version
             if '+' in current_version:
                 logger.warning(
                     "Dumpdata from intermediate version %s" % current_version)
             
+            self.stream.write('# -*- coding: UTF-8 -*-\n')
             self.stream.write('''\
 """
 This is a `Python dump <http://north.lino-framework.org>`_
@@ -496,13 +496,13 @@ class FlushDeferredObjects:
     """
     pass
 
-class DpyDeserializer:
+class LoaderBase:
     
     def __init__(self):
-        #~ logger.info("20120225 DpyDeserializer.__init__()")
+        #~ logger.info("20120225 DpyLoader.__init__()")
         self.save_later = {}
         self.saved = 0
-        #~ self.count = 0
+        self.count_objects = 0
 
   
     def flush_deferred_objects(self):
@@ -526,8 +526,44 @@ class DpyDeserializer:
                     #~ self.save_later.append(obj)
             logger.info("Saved %d instances.",self.saved)
             
+    def expand(self,obj):
+        if obj is None:
+            pass # ignore None values
+        elif obj is FlushDeferredObjects:
+            self.flush_deferred_objects()
+        elif isinstance(obj,models.Model):
+            yield FakeDeserializedObject(self,obj)
+        elif hasattr(obj,'__iter__'):
+        #~ if type(obj) is GeneratorType:
+            #~ logger.info("20120225 expand iterable %r",obj)
+            for o in obj: 
+                for so in self.expand(o): 
+                    yield so
+        #~ elif isinstance(obj,MtiChildWrapper):
+            # the return value of create_mti_child()
+            #~ yield FakeDeserializedObject(self,obj)
+            #~ obj.deserializer = self
+            #~ yield obj
+        else:
+            logger.warning("Ignored unknown object %r",obj)
+    
+        
+    def register_success(self):
+        self.saved += 1
+        self.count_objects += 1
+        
+    def register_failure(self,obj,e):
+        msg = force_unicode(e)
+        d = self.save_later.setdefault(obj.object.__class__,{})
+        l = d.setdefault(msg,[])
+        if len(l) == 0:
+            logger.info("Deferred %s : %s",obj2str(obj.object),msg)
+        l.append(obj)
+        
+class DpyDeserializer(LoaderBase):
+    
     def deserialize(self,fp, **options):
-        #~ logger.info("20120225 DpyDeserializer.deserialize()")
+        #~ logger.info("20120225 DpyLoader.deserialize()")
         if isinstance(fp, basestring):
             raise NotImplementedError
         #~ dbutils.set_language(settings.SITE.DEFAULT_LANGUAGE.django_code)
@@ -556,35 +592,16 @@ class DpyDeserializer:
                 
     def deserialize_module(self,module, **options):
         
-        def expand(obj):
-            if obj is None:
-                pass # ignore None values
-            elif obj is FlushDeferredObjects:
-                self.flush_deferred_objects()
-            elif isinstance(obj,models.Model):
-                yield FakeDeserializedObject(self,obj)
-            elif hasattr(obj,'__iter__'):
-            #~ if type(obj) is GeneratorType:
-                #~ logger.info("20120225 expand iterable %r",obj)
-                for o in obj: 
-                    for so in expand(o): 
-                        yield so
-            #~ elif isinstance(obj,MtiChildWrapper):
-                # the return value of create_mti_child()
-                #~ yield FakeDeserializedObject(self,obj)
-                #~ obj.deserializer = self
-                #~ yield obj
-            else:
-                logger.warning("Ignored unknown object %r",obj)
-                
         if not hasattr(module,'objects'):
             #~ raise Exception("%s has no attribute 'objects'" % fp.name)
             raise Exception("Fixture %s has no attribute 'objects'" % module.__name__)
+            
         empty_fixture = True
         for obj in module.objects():
-            for o in expand(obj): 
+            for o in self.expand(obj): 
                 empty_fixture = False
                 yield o
+            
         if empty_fixture:
             if SUPPORT_EMPTY_FIXTURES:
                 yield DummyDeserializedObject() # avoid Django interpreting empty fixtures as an error
@@ -637,17 +654,16 @@ See <https://code.djangoproject.com/ticket/18213>.
         if hasattr(module,'after_load'):
             module.after_load()
         
-
-    def register_success(self):
-        self.saved += 1
+       
+    
+class DpyLoader(LoaderBase):        
         
-    def register_failure(self,obj,e):
-        msg = force_unicode(e)
-        d = self.save_later.setdefault(obj.object.__class__,{})
-        l = d.setdefault(msg,[])
-        if len(l) == 0:
-            logger.info("Deferred %s : %s",obj2str(obj.object),msg)
-        l.append(obj)
+    def save(self,obj):
+        for o in self.expand(obj):
+            o.try_save()
+        
+
+        
 
 def Deserializer(fp, **options):
     """
@@ -737,7 +753,7 @@ def load_fixture_from_module(m, **options):
     #~ print filename
     #~ assert filename.endswith('.py')
     #~ fp = open(filename)
-    d = DpyDeserializer()
+    d = DpyLoader()
     for o in d.deserialize_module(m, **options):
         o.save()
     if d.saved != 1:
