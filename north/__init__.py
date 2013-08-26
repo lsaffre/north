@@ -589,16 +589,20 @@ class Site(Site):
         #~ return l
       
 
-    def babelitem(self,**v):
+    def babelitem(self,*args,**values):
         """
         Given a dictionary with babel values, return the 
         value corresponding to the current language.
+        
         This is available in templates as a function `tr`.
         
         >>> kw = dict(de="Hallo",en="Hello",fr="Salut")
         
         >>> from north import TestSite as Site
         >>> from north.dbutils import set_language
+        
+        A Site with default langueg "de":
+        
         >>> site = Site(languages="de en")
         >>> tr = site.babelitem
         >>> set_language('de')
@@ -608,23 +612,52 @@ class Site(Site):
         >>> set_language('en')
         >>> tr(**kw)
         'Hello'
+
+        If the current language is not found in the specified `values`,
+        then it returns the site's default language:
         
         >>> set_language('jp')
+        >>> tr(en="Hello",de="Hallo",fr="Salut")
         >>> tr(**kw)
         'Hallo'
+        
+        Another way is to specify an explicit default value using a
+        positional argument. In that case the language's default language
+        doesn'n matter:
+        
+        >>> set_language('jp')
+        >>> tr("Hello",de="Hallo",fr="Salut")
+        'Hello'
+        
+        >>> set_language('de')
+        >>> tr("Hello",de="Hallo",fr="Salut")
+        'Hallo'
+        
+        You may not specify more than one default value:
+        
+        >>> tr("Hello","Hallo")
+        Traceback (most recent call last):
+        ...
+        ValueError: ('Hello', 'Hallo') is more than 1 default value.
+        
         
         >>> 
         """
         from django.utils import translation
         info = self.language_dict.get(translation.get_language(),self.DEFAULT_LANGUAGE)
-        #~ lng = translation.get_language()
-        #~ print lng,v
-        #~ lng = LANG or DEFAULT_LANGUAGE
-        if info == self.DEFAULT_LANGUAGE:
-            return v.get(info.name)
-        x = v.get(info.name,None)
-        if x is None:
-            return v.get(self.DEFAULT_LANGUAGE.name)
+        if len(args) == 0:
+            default_value = None
+            if info == self.DEFAULT_LANGUAGE:
+                return values.get(info.name)
+            x = values.get(info.name,None)
+            if x is None:
+                return values.get(self.DEFAULT_LANGUAGE.name)
+            return x
+        elif len(args) == 1:
+            default_value = args[0]
+            return values.get(info.name,default_value)
+        else:
+            raise ValueError("%(values)s is more than 1 default value." % dict(values=args))
         return x
         
     # babel_get(v) = babelitem(**v)

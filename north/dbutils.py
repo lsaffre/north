@@ -26,9 +26,27 @@ Example::
 This module also defines the model mixin :class:`BabelNamed`
       
 
+Date formatting functions
+-------------------------
+
+This module also includes shortcuts to `python-babel`'s 
+`date formatting functions <http://babel.pocoo.org/docs/dates/>`_
+
+>>> d = datetime.date(2013,8,26)
+>>> print(fds(d)) # short
+8/26/13
+>>> print(fdm(d)) # medium
+Aug 26, 2013
+>>> print(fdl(d)) # long
+August 26, 2013
+>>> print(fdf(d)) # full
+Monday, August 26, 2013
+
+    
+
 """
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -51,7 +69,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from djangosite.dbutils import monthname, set_language
-from djangosite.dbutils import dtomy
+from djangosite.dbutils import dtomy # obsolete
+from djangosite.dbutils import fdmy
 
 import north
 
@@ -93,7 +112,7 @@ class UnresolvedModel:
     def __init__(self,model_spec,app_label):
         self.model_spec = model_spec
         self.app_label = app_label
-        #~ print repr(self)
+        #~ print(self)
         
     def __repr__(self):
         return self.__class__.__name__ + '(%s,%s)' % (self.model_spec,self.app_label)
@@ -143,8 +162,8 @@ def resolve_model(model_spec,app_label=None,strict=False):
         if strict:
             if False:
                 from django.db.models import loading
-                print 20130219, settings.INSTALLED_APPS
-                print loading.get_models()
+                print(20130219, settings.INSTALLED_APPS)
+                print(loading.get_models())
                 #~ if len(loading.cache.postponed) > 0:
               
             if isinstance(strict,basestring):
@@ -233,6 +252,7 @@ class BabelNamed(models.Model):
     
     class Meta:
         abstract = True
+        app_label = 'unused' # avoid "IndexError: list index out of range" in `django/db/models/base.py`
         
     name = BabelCharField(max_length=200,verbose_name=_("Designation"))
     
@@ -307,10 +327,16 @@ def dtos(d):
     return format_date(d, format='short')
     
 def dtosm(d):
-    return format_date(d)
+    return format_date(d,format='medium')
         
 def dtosl(d):
     return format_date(d, format='full')
+    
+def fdf(d): 
+    return format_date(d, format='full')
+def fdl(d): return format_date(d, format='long')
+def fdm(d): return format_date(d, format='medium')
+def fds(d): return format_date(d, format='short')
     
 def day_and_month(d):
     return format_date(d,"dd. MMMM")
