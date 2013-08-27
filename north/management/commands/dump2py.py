@@ -86,6 +86,7 @@ class Command(BaseCommand):
     
     
     def write_files(self):
+        logger.info("Writing %s...",self.main_file)
         self.stream = open(self.main_file,'wt')
         #~ name,current_version,url = settings.SITE.using().next()
         current_version = settings.SITE.version
@@ -234,6 +235,7 @@ def main():
         for model in self.models:
             filename = '%s.py' % model._meta.db_table
             filename = os.path.join(self.output_dir,filename)
+            logger.info("Writing %s...",filename)
             stream = file(filename,'wt')
             stream.write('# -*- coding: UTF-8 -*-\n')
             qs = model.objects.all()
