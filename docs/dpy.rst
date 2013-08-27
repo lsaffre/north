@@ -75,7 +75,46 @@ There are two big use cases for Python fixtures:
 (2) `Intelligent fixtures`_ are reusable sets of data 
     to be used by unit tests, application prototypes and 
     demonstrative examples.
+
+.. _backup:
     
+Backup
+======
+
+You can make a Python dump of your database
+using 
+the :mod:`dump2py <north.management.commands.dump2py>` 
+management command that comes with :mod:`north`.
+  
+For example::
+  
+    $ python manage.py dump2py 20130117
+    
+This will create a directory `20130117` with a set of ` .py` files 
+which are a perfect representation, in Python, of your database at 
+that moment.
+These files contain a complete backup of your database. 
+You can archive the directory and send it around per email.
+  
+  
+To restore such a dump to your database, simply run the 
+:xfile:`restore.py` 
+script from that directory::
+  
+      $ python manage.py run mydump/restore.py
+  
+Or, if you don't use per-project :xfile:`manage.py` files::
+      
+      $ set DJANGO_SETTINGS_MODULE=myproject
+      $ django-admin.py run mydump/restore.py
+  
+Note that we are using here the 
+:mod:`run <djangosite.management.commands.run>` 
+management command.
+This makes it possible to restore your data into another 
+project, creating a copy of your database.
+  
+
 .. _datamig:
     
 Database Migration
@@ -90,28 +129,20 @@ This is called database migration.
 How to migrate data
 -------------------
 
-Python fixtures makes life very easy
-for the system administrator who does on upgrade 
+A Python dump makes life easy
+for the system administrator who does an upgrade 
 of your application.
 
 - Before upgrading or applying configuration changes, 
-  create a backup using Django's standard `dumpdata` command,
-  redirecting the output to a uniquely named `.py` file in 
-  your local fixtures directory. For example::
-  
-    $ python manage.py dumpdata --format py > fixtures/b20130117.py
-    
-  Note that the file :file:`b20130117.py` contains a complete backup 
-  of your database. You can archive it or send it around per email.
+  create a backup as described above.
   
 - After upgrading or applying configuration changes, 
-  run :mod:`initdb <djangosite.management.commands.initdb>` 
-  to load that backup back to your database::
-  
-    $ python manage.py initdb b20130117
+  restore your database from that dump.
+  This will automatically detect version changes and 
+  apply any necessary changes to your data.
 
-- It is recommended to stop any other processes which might access 
-  your database during the whole procedure.
+It is of course recommended to stop any other processes 
+which might access your database during the whole procedure.
 
 
 The Double Dump Test (DDT)

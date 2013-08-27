@@ -440,7 +440,8 @@ class FakeDeserializedObject(base.DeserializedObject):
             m = getattr(obj,'before_dumpy_save',None)
             if m is not None:
                 m()
-            obj.full_clean()
+            if not self.deserializer.quick:
+                obj.full_clean()
             obj.save(*args,**kw)
             logger.debug("%s has been saved" % obj2str(obj))
             self.deserializer.register_success()
@@ -497,6 +498,8 @@ class FlushDeferredObjects:
     pass
 
 class LoaderBase:
+    
+    quick = False
     
     def __init__(self):
         #~ logger.info("20120225 DpyLoader.__init__()")
