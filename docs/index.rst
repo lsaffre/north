@@ -1,8 +1,10 @@
+.. _north:
+
 =====
 North
 =====
 
-Welcome to the North project homepage.
+Welcome to the :ref:`north` project documentation.
 
 
 .. py2rst::
@@ -14,7 +16,7 @@ Welcome to the North project homepage.
 Related projects
 ----------------
 
-- North extends `djangosite <http://site.lino-framework.org>`__  
+- North extends :ref:`djangosite`
 
 - `Lino <http://www.lino-framework.org>`__  is based on North.
   
@@ -24,6 +26,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   backup
+   migrations
    dpy
    babel
    tutorials/index

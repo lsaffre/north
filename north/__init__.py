@@ -111,6 +111,7 @@ class Site(Site):
     """
     If you maintain a data migration module for your application, 
     specify its name here.
+    See :ref:`datamig`.
     """
     
     loading_from_dump = False
@@ -144,13 +145,26 @@ class Site(Site):
     
     Changing this setting affects your database structure 
     if your application uses babel fields,
-    and thus require a data migration.
+    and thus require a :ref:`data migration <datamig>`.
     
-    If this is not None, Site will 
-    set the Django settings :setting:`USE_L10N` 
-    and  :setting:`LANGUAGE_CODE`.
+    If this is not `None`, Site will set the Django settings 
+    `USE_L10N <http://docs.djangoproject.com/en/dev/ref/settings/#use-l10n>`_ 
+    and
+    `LANGUAGE_CODE <http://docs.djangoproject.com/en/dev/ref/settings/#language-code>`_.
     
     """
+    
+    hidden_languages = None
+    """
+    A string of django codes of languages that should be hidden.
+    
+    :ref:`welfare` uses this because the demo database has 4 
+    languages, but `nl` is currently not worth to be shown in a public 
+    demo.
+    
+    """
+        
+    
     
     BABEL_LANGS = tuple()
     
@@ -463,7 +477,9 @@ class Site(Site):
         
     def get_default_language(self):
         """
-        The default language to use in every `north.dbutils.LanguageField`.
+        The django code of the default language to use in every 
+        :class:`LanguageField <north.dbutils.LanguageField>`.
+        
         """
         return self.DEFAULT_LANGUAGE.django_code
         

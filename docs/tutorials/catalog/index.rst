@@ -16,8 +16,8 @@ Let's create a little Site with the following
   >>> from tutorials.catalog.models import *
   
 
-The settings.py file is where you specify the 
-:attr:`languages <djangosite.Site.languages>` 
+The :xfile:`settings.py` file is where you specify the 
+:attr:`languages <north.Site.languages>` 
 setting of a given Site instance:
 
 .. literalinclude:: settings.py
@@ -26,12 +26,12 @@ setting of a given Site instance:
 The `demo` fixture
 ------------------
 
-Now we install some demo data. Here is a Python fixture:
+Now we install some demo data. Here is a :ref:`Python fixture <dpy>`:
 
 .. literalinclude:: fixtures/demo.py
 
 Note how the application developer doesn't know which 
-:attr:`languages <djangosite.Site.languages>` setting at runtime.
+:attr:`languages <north.Site.languages>` setting at runtime.
 
 Of course the fixture above supposes a single person who knows 
 all the languages, but that's just because we are simplifying. 
@@ -57,7 +57,6 @@ Chair, Table, Monitor, Mouse, Keyboard, Consultation
 >>> set_language('de')
 >>> print ', '.join([unicode(p) for p in Product.objects.all()])
 Stuhl, Tisch, Bildschirm, Maus, Tastatur, Beratung
-
 
 North doesn't impose any templating or other system to do 
 that, so the formatting details are not subject of this tutorial.
@@ -104,7 +103,7 @@ vrijdag 18 januari 2013
 Where to go next
 ----------------
 
-One detail is missing to make North's multi-linguale fields 
+One detail is missing to make North's multi-lingual fields 
 usable in a normal Django project: a possibility to integrate 
 these variable fields into your Admin form.
 

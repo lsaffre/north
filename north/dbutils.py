@@ -213,8 +213,9 @@ def contribute_to_class(field,cls,fieldclass,**kw):
 
 class BabelCharField(models.CharField):
     """
-    Define a variable number of clones of the "master" field, 
-    one for each language of your :attr:`djangosite.Site.languages`.
+    Define a variable number of `CharField` database fields, 
+    one for each language of your :attr:`north.Site.languages`.
+    See :ref:`mldbc`.
     """
         
     def contribute_to_class(self, cls, name):
@@ -233,8 +234,9 @@ class BabelCharField(models.CharField):
 
 class BabelTextField(models.TextField):
     """
-    Define a variable number of clones of the "master" field, 
-    one for each babel language.
+    Define a variable number of `TextField` database fields, 
+    one for each language of your :attr:`north.Site.languages`.
+    See :ref:`mldbc`.
     """
     def contribute_to_class(self, cls, name):
         super(BabelTextField,self).contribute_to_class(cls, name)
@@ -278,7 +280,7 @@ class LanguageField(models.CharField):
         models.CharField.__init__(self,*args, **defaults)
 
                 
-def run_with_language(lang,func):                
+def run_with_language(lang,func):
     """
     Selects the specified language `lang`, 
     calls the specified functon `func`,

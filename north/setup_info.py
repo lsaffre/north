@@ -1,7 +1,5 @@
-"""
-:copyright: Copyright 2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
-"""
+## Copyright 2013 by Luc Saffre.
+## License: BSD, see LICENSE for more details.
 
 SETUP_INFO = dict(
   name = 'North',
@@ -11,15 +9,15 @@ SETUP_INFO = dict(
   description = "Another way to migrate Django databases",
   #~ long_description=open('README.txt').read(),
   long_description="""\
-North is a Python code serializer/deserializer for Django which lets 
-you write intelligent fixtures and generate database dumps. 
+North is a Django extension which lets you write database fixtures and 
+make database dumps in Python.
 You can use it to provide automated database migrations, which makes 
 it an alternative to `South <http://south.aeracode.org/>`__
 
 North includes an optional single-table solution for handling multilingual 
 database content.
 
-North doesn't require any database model, it is not even a Django app. 
+North doesn't require any database model. 
 Basic usage in your `settings.py` file is::
 
   from north import Site

@@ -7,15 +7,15 @@ Another way to migrate Django databases
 Description
 -----------
 
-North is a Python code serializer/deserializer for Django which lets 
-you write intelligent fixtures and generate database dumps. 
+North is a Django extension which lets you write database fixtures and 
+make database dumps in Python.
 You can use it to provide automated database migrations, which makes 
 it an alternative to `South <http://south.aeracode.org/>`__
 
 North includes an optional single-table solution for handling multilingual 
 database content.
 
-North doesn't require any database model, it is not even a Django app. 
+North doesn't require any database model. 
 Basic usage in your `settings.py` file is::
 
   from north import Site
