@@ -13,6 +13,7 @@ Let's create a little Site with the following
 .. literalinclude:: models.py
 
 ..
+  >>> from __future__ import print_function
   >>> from tutorials.catalog.models import *
   
 
@@ -50,12 +51,12 @@ Installed 6 object(s) from 1 fixture(s)
 
 And finally we can print a catalog in different languages:
 
->>> print ', '.join([unicode(p) for p in Product.objects.all()])
+>>> print(', '.join([unicode(p) for p in Product.objects.all()]))
 Chair, Table, Monitor, Mouse, Keyboard, Consultation
 
->>> from north.dbutils import set_language
->>> set_language('de')
->>> print ', '.join([unicode(p) for p in Product.objects.all()])
+>>> from django.utils import translation
+>>> with translation.override('de'):
+...     print(', '.join([unicode(p) for p in Product.objects.all()]))
 Stuhl, Tisch, Bildschirm, Maus, Tastatur, Beratung
 
 North doesn't impose any templating or other system to do 
@@ -76,26 +77,25 @@ is that Babel offers a "full" format:
 >>> today = datetime.date(2013,01,18)
 >>> from north.dbutils import format_date
 
->>> set_language(None)
->>> print format_date(today,'full')
+>>> print(format_date(today,'full'))
 Friday, January 18, 2013
 
->>> set_language('fr')
->>> print format_date(today,'full')
+>>> with translation.override('fr'):
+...    print(format_date(today,'full'))
 vendredi 18 janvier 2013
 
->>> set_language('de')
->>> print format_date(today,'full')
+>>> with translation.override('de'):
+...    print(format_date(today,'full'))
 Freitag, 18. Januar 2013
 
 You can use this also for languages that aren't on your site:
 
->>> set_language('et')
->>> print format_date(today,'full')
+>>> with translation.override('et'):
+...    print(format_date(today,'full'))
 reede, 18. jaanuar 2013
 
->>> set_language('nl')
->>> print format_date(today,'full')
+>>> with translation.override('nl'):
+...    print(format_date(today,'full'))
 vrijdag 18 januari 2013
 
 

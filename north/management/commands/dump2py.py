@@ -133,7 +133,6 @@ from django.contrib.contenttypes.models import ContentType
 from north.dpy import create_mti_child
 from north.dpy import DpyLoader
 from north.dbutils import resolve_model
-from north.dbutils import set_language
         
 def new_content_type_id(m):
     if m is None: return m
@@ -229,7 +228,6 @@ def main():
     from django.core.management import call_command
     call_command('initdb')
     settings.SITE.install_migrations(globals())
-    set_language()
     loader = DpyLoader()
     os.chdir(os.path.dirname(__file__))
         

@@ -28,6 +28,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 from django.utils.importlib import import_module
+from django.utils import translation
 
 from djangosite.dbutils import obj2str, sorted_models_list, full_model_name
 from north import dbutils
@@ -570,7 +571,9 @@ class DpyDeserializer(LoaderBase):
         if isinstance(fp, basestring):
             raise NotImplementedError
         #~ dbutils.set_language(settings.SITE.DEFAULT_LANGUAGE.django_code)
-        dbutils.set_language()
+        #~ dbutils.set_language()
+        
+        translation.deactivate_all()
         
         #~ self.count += 1
         fqname = 'north.dpy_tmp_%s' % hash(self)
@@ -756,7 +759,7 @@ def load_fixture_from_module(m, **options):
     #~ print filename
     #~ assert filename.endswith('.py')
     #~ fp = open(filename)
-    d = DpyLoader()
+    d = DpyDeserializer()
     for o in d.deserialize_module(m, **options):
         o.save()
     if d.saved != 1:

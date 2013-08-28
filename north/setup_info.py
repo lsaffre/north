@@ -39,7 +39,7 @@ for certain Django settings, including `INSTALLED_APPS` and
 `SERIALIZATION_MODULES`.
 """,
   license = 'Free BSD',
-  packages = ['north','north.demo','north.management','north.management.commands'],
+  packages = ['north','north.dbutils', 'north.demo','north.management','north.management.commands'],
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
   url = "http://north.lino-framework.org",

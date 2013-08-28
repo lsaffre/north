@@ -1,6 +1,7 @@
+## Copyright 2013 by Luc Saffre.
+## License: BSD, see LICENSE for more details.
 """
-:copyright: Copyright 2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
+The top-level package of :ref:`north`.
 """
 
 import os
@@ -231,6 +232,7 @@ class Site(Site):
         the attribute `languages` and converts it to a tuple of 
         `LanguageInfo` objects.
         
+        >>> from django.utils import translation
         >>> from north import TestSite as Site
         >>> from pprint import pprint
         >>> pprint(Site().django_settings) #doctest: +ELLIPSIS
@@ -354,7 +356,7 @@ class Site(Site):
         
         from django.conf import settings
         from django.utils.translation import ugettext_lazy as _
-        from north.dbutils import set_language
+        #~ from north.dbutils import set_language
         
         def langtext(code):
             for k,v in settings.LANGUAGES:
@@ -397,9 +399,10 @@ class Site(Site):
                 _add_language(lang.django_code,text)
                 
             """
-            Activate the site's default language
+            Cannot activate the site's default language
+            because some test cases in django.contrib.humanize rely on en-us as default language
             """
-            set_language(self.get_default_language())
+            #~ set_language(self.get_default_language())
 
     def get_language_info(self,code):
         """
@@ -558,7 +561,6 @@ class Site(Site):
         Examples:
         
         >>> from north import TestSite as Site
-        >>> from north.dbutils import set_language
         >>> from atelier.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
@@ -616,37 +618,37 @@ class Site(Site):
         >>> kw = dict(de="Hallo",en="Hello",fr="Salut")
         
         >>> from north import TestSite as Site
-        >>> from north.dbutils import set_language
+        >>> from django.utils import translation
         
         A Site with default langueg "de":
         
         >>> site = Site(languages="de en")
         >>> tr = site.babelitem
-        >>> set_language('de')
-        >>> tr(**kw)
+        >>> with translation.override('de'):
+        ...    tr(**kw)
         'Hallo'
         
-        >>> set_language('en')
-        >>> tr(**kw)
+        >>> with translation.override('en'):
+        ...    tr(**kw)
         'Hello'
 
         If the current language is not found in the specified `values`,
         then it returns the site's default language:
         
-        >>> set_language('jp')
-        >>> tr(en="Hello",de="Hallo",fr="Salut")
+        >>> with translation.override('jp'):
+        ...    tr(en="Hello",de="Hallo",fr="Salut")
         'Hallo'
         
         Another way is to specify an explicit default value using a
         positional argument. In that case the language's default language
         doesn'n matter:
         
-        >>> set_language('jp')
-        >>> tr("Hello",de="Hallo",fr="Salut")
+        >>> with translation.override('jp'):
+        ...    tr("Hello",de="Hallo",fr="Salut")
         'Hello'
         
-        >>> set_language('de')
-        >>> tr("Hello",de="Hallo",fr="Salut")
+        >>> with translation.override('de'):
+        ...     tr("Hello",de="Hallo",fr="Salut")
         'Hallo'
         
         You may not specify more than one default value:
@@ -700,8 +702,8 @@ class Site(Site):
         
         Examples:
         
+        >>> from django.utils import translation
         >>> from north import TestSite as Site
-        >>> from north.dbutils import set_language
         >>> from atelier.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
@@ -710,12 +712,12 @@ class Site(Site):
         
         
         >>> site,obj = testit('de en')
-        >>> set_language('de')
-        >>> site.babelattr(obj,'name')
+        >>> with translation.override('de'):
+        ...     site.babelattr(obj,'name')
         'Hallo'
         
-        >>> set_language('en')
-        >>> site.babelattr(obj,'name')
+        >>> with translation.override('en'):
+        ...     site.babelattr(obj,'name')
         'Hello'
         
         If the object has no translation for a given language, 
@@ -724,14 +726,14 @@ class Site(Site):
         The language exists on the site, but the object has no translation for it:
         
         >>> site,obj = testit('en es')
-        >>> set_language('es')
-        >>> site.babelattr(obj,'name')
+        >>> with translation.override('es'):
+        ...     site.babelattr(obj,'name')
         'Hello'
         
         Or a language has been activated which doesn't exist on the site:
        
-        >>> set_language('fr')
-        >>> site.babelattr(obj,'name')
+        >>> with translation.override('fr'):
+        ...     site.babelattr(obj,'name')
         'Hello'
         
         """
