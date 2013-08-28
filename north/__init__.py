@@ -344,8 +344,14 @@ class Site(Site):
         #~ self.AVAILABLE_LANGUAGES = self.AVAILABLE_LANGUAGES + self.BABEL_LANGS
                     
         if must_set_language_code:
-            self.update_settings(LANGUAGE_CODE = self.get_default_language())
-        #~ self.update_settings(LANGUAGE_CODE = self.languages[0].django_code)
+            #~ self.update_settings(LANGUAGE_CODE = self.get_default_language())
+            self.update_settings(LANGUAGE_CODE = self.languages[0].django_code)
+            """
+            Note: LANGUAGE_CODE is what *Django* believes to be the default language.
+            This should be some variant of English ('en' or 'en-us') 
+            if you use `django.contrib.humanize`
+            https://code.djangoproject.com/ticket/20059
+            """
                     
 
     def do_site_startup(self):

@@ -573,7 +573,7 @@ class DpyDeserializer(LoaderBase):
         #~ dbutils.set_language(settings.SITE.DEFAULT_LANGUAGE.django_code)
         #~ dbutils.set_language()
         
-        translation.deactivate_all()
+        translation.activate(settings.SITE.get_default_language())
         
         #~ self.count += 1
         fqname = 'north.dpy_tmp_%s' % hash(self)
