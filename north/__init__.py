@@ -170,9 +170,11 @@ class Site(Site):
     BABEL_LANGS = tuple()
     
     
-    def init_before_local(self,*args):
-        args += ('north',)
-        super(Site,self).init_before_local(*args)
+    def init_before_local(self,settings_globals,user_apps):
+        if isinstance(user_apps,basestring):
+            user_apps = [user_apps]
+        user_apps = user_apps + ['north']
+        super(Site,self).init_before_local(settings_globals,user_apps)
         self.update_settings(SERIALIZATION_MODULES = {
             "py" : "north.dpy",
         })
@@ -774,12 +776,11 @@ class TestSite(Site):
     >> from north import TestSite as Site
     >> Site(...)
     
-    
-    
     """
     def __init__(self,*args,**kwargs):
         kwargs.update(no_local=True)
         g = dict(__file__=__file__)
+        g.update(SECRET_KEY="20227") # see :djangoticket:`20227`
         super(TestSite,self).__init__(g,*args,**kwargs)
         
     #~ def run_djangosite_local(self):
