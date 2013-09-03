@@ -218,10 +218,14 @@ class Site(Site):
           
     def using(self,ui=None):
         """
-        
+        Adds Nort and Babel to the list of displayed versions.
         """
-        import babel
         
+        import north
+        yield ("North",north.SETUP_INFO['version'],north.SETUP_INFO['url'])
+        
+        
+        import babel
         yield ("Babel",babel.__version__,"http://babel.edgewall.org/")
         #~ yield (SETUP_INFO['name'],SETUP_INFO['version'],SETUP_INFO['url'])
         for u in super(Site,self).using(ui): yield u
