@@ -3,7 +3,7 @@
 
 SETUP_INFO = dict(
   name = 'North',
-  version = '0.1.6', # released 20130813
+  version = '0.1.7', # released 20130911
   install_requires = ['djangosite','Babel'],
   test_suite = 'tests',
   description = "Another way to migrate Django databases",
