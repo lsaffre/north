@@ -93,9 +93,9 @@ class Command(BaseCommand):
         self.stream = open(self.main_file,'wt')
         #~ name,current_version,url = settings.SITE.using().next()
         current_version = settings.SITE.version
-        if '+' in current_version:
-            logger.warning(
-                "Dumpdata from intermediate version %s" % current_version)
+        #~ if '+' in current_version:
+            #~ logger.warning(
+                #~ "Dumpdata from intermediate version %s" % current_version)
         
         self.stream.write("""\
 #!/usr/bin/env python
@@ -226,7 +226,7 @@ def bv2kw(fieldname,values):
 def main():    
     settings.SITE.startup()
     from django.core.management import call_command
-    call_command('initdb')
+    call_command('initdb',interactive=False)
     settings.SITE.install_migrations(globals())
     loader = DpyLoader()
     os.chdir(os.path.dirname(__file__))
@@ -310,9 +310,14 @@ if __name__ == '__main__':
             assert len(unsorted) == len(guilty)
             msg = "There are %d models with circular dependencies :\n" % len(unsorted)
             msg += "- " + '\n- '.join([
-                full_model_name(m)+' (depends on %s)' % ", ".join([full_model_name(d) for d in deps]) for m,deps in guilty.items()])
-            for ln in msg.splitlines():
-                self.stream.write('\n    # %s' % ln)
+                full_model_name(m)+' (depends on %s)' % ", ".join([
+                    full_model_name(d) for d in deps]) 
+                        for m,deps in guilty.items()])
+            if False:
+                # we don't write them to the .py file because they are 
+                # in random order which would cause false ddt to fail
+                for ln in msg.splitlines():
+                    self.stream.write('\n# %s' % ln)
             logger.info(msg)
             sorted.extend(unsorted)              
         return sorted      
