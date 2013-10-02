@@ -66,7 +66,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangosite.dbutils import monthname
 #~ from djangosite.dbutils import set_language
-from djangosite.dbutils import dtomy # obsolete
+from djangosite.dbutils import dtomy # obsolete. use fdmy instead
 from djangosite.dbutils import fdmy
 
 from dbutils_babel import BabelCharField, BabelTextField, BabelNamed

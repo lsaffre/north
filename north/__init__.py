@@ -631,7 +631,7 @@ class Site(Site):
         >>> from north import TestSite as Site
         >>> from django.utils import translation
         
-        A Site with default langueg "de":
+        A Site with default language "de":
         
         >>> site = Site(languages="de en")
         >>> tr = site.babelitem
@@ -644,7 +644,7 @@ class Site(Site):
         'Hello'
 
         If the current language is not found in the specified `values`,
-        then it returns the site's default language:
+        then it returns the site's default language ("de" in our example):
         
         >>> with translation.override('jp'):
         ...    tr(en="Hello",de="Hallo",fr="Salut")

@@ -4,11 +4,13 @@
 
 """
 
+.. management_command:: dump2py
+
 To make a python dump of your database 
 (be it for daily backup or before a migration), 
 go to your project directory and say::
 
-  $ python manage.py mydump
+  $ python manage.py dump2py mydump
   
 This will create a python dump of your database to the directory `mydump`.
 
