@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
+# Copyright 2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
+
 """
-:copyright: Copyright 2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
 
 """
 
@@ -28,7 +29,11 @@ class Cycler:
     >>> print s
     abcabcabca
     
-    A Cycler on an empty list will endlessly pop None values:
+    An empty Cycler or a Cycler on an empty list will endlessly pop None values:
+    
+    >>> c = Cycler()
+    >>> print c.pop(), c.pop(), c.pop()
+    None None None
     
     >>> c = Cycler([])
     >>> print c.pop(), c.pop(), c.pop()
@@ -36,8 +41,15 @@ class Cycler:
     
     """
     def __init__(self,*args):
+        """
+        If there is exactly one argument, then this must be an iterable
+        and will be used as the list of items to cycle on.
+        If there is more than one positional argument, then these 
+        arguments themselves will be the list of items.
+        """
+        
         if len(args) == 0:
-            raise ValueError()
+            self.items = []
         elif len(args) == 1:
             self.items = list(args[0])
         else:
