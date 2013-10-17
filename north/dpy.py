@@ -565,7 +565,9 @@ class LoaderBase:
         l.append(obj)
         
 class DpyDeserializer(LoaderBase):
-    
+    """
+    The deserializer for :ref:`dpy`.
+    """
     def deserialize(self,fp, **options):
         #~ logger.info("20120225 DpyLoader.deserialize()")
         if isinstance(fp, basestring):

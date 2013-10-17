@@ -13,7 +13,7 @@ or
 :class:`BabelTextField`.
 
 Each babel field generates a series of normal CharFields (or TextFields) 
-depending on your :attr:`languages <north.Site.languages>` setting.
+depending on your :setting:`languages` setting.
 
 Example::
 
@@ -76,7 +76,7 @@ from dbutils_babel import lookup_filter
 from dbutils_babel import contribute_to_class
 from dbutils_babel import LANGUAGE_CODE_MAX_LENGTH
 
-import north
+from north.utils import to_locale
 
 
 
@@ -204,12 +204,11 @@ def old_resolve_model(model_spec,app_label=None,strict=False):
     
 
 
-                        
 
 def format_date(d,format='medium'):
     if not d: return ''
     return babel_format_date(d, format=format,
-        locale=north.to_locale(translation.get_language()))
+        locale=to_locale(translation.get_language()))
     
 #~ def dtos(d):
     #~ return format_date(d, format='short')

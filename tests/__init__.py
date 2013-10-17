@@ -3,7 +3,7 @@ from unipath import Path
 ROOTDIR = Path(__file__).parent.parent
 
 # load  SETUP_INFO:
-execfile(ROOTDIR.child('north','setup_info.py'),globals())
+execfile(ROOTDIR.child('north','project_info.py'),globals())
 
 from djangosite.utils.pythontest import TestCase
 

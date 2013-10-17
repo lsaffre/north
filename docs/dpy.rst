@@ -60,6 +60,12 @@ Vocabulary:
 - a *deserializer* is run by 
   `loaddata <https://docs.djangoproject.com/en/dev/ref/django-admin/#django-admin-loaddata>`_ 
   and loads fixtures into the database.
+  
+  
+Note that you cannot use relative imports in a Python fixture.
+See `here 
+<http://stackoverflow.com/questions/4907054/loading-each-py-file-in-a-path-imp-load-module-complains-about-relative-impor>`__
+  
 
   
 Discussion
