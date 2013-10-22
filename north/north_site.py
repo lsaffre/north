@@ -1,13 +1,18 @@
 ## Copyright 2013 by Luc Saffre.
 ## License: BSD, see LICENSE for more details.
 """
-This defines the :class:`north.Site` class.
+This defines the :class:`Site` class.
 
 """
+
+#~ from __future__ import unicode_literals
 
 import os
 
 from djangosite import Site, DJANGO_DEFAULT_LANGUAGE, assert_django_code
+from utils import to_locale, LanguageInfo
+
+gettext_noop = lambda s: s
 
 #~ gettext = lambda s: s
 
@@ -42,16 +47,12 @@ from djangosite import Site, DJANGO_DEFAULT_LANGUAGE, assert_django_code
 #~ DEFAULT_LANGUAGE = simplified_code(settings.LANGUAGE_CODE)
 
 
-gettext_noop = lambda s: s
-
-from utils import to_locale, LanguageInfo
 
 class NOT_PROVIDED: pass
 
 class Site(Site):
     """
     Extends :class:`djangosite.Site`.
-    
     
     .. setting:: languages
 
@@ -218,8 +219,8 @@ class Site(Site):
          LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
         
         >>> pprint(Site(languages="de-ch de-be").languages)
-        (LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
-         LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
+        (LanguageInfo(django_code='de-ch', name=u'de_CH', index=0, suffix=''),
+         LanguageInfo(django_code='de-be', name=u'de_BE', index=1, suffix='_de_BE'))
         
         If we have more than languages en-us and en-gb *on a same Site*, 
         then it is not allowed to specify just "en". 
@@ -228,17 +229,21 @@ class Site(Site):
         
         >>> site = Site(languages="en-us fr de-be de")
         >>> pprint(site.languages)
-        (LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+        (LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix=''),
          LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
-         LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
+         LanguageInfo(django_code='de-be', name=u'de_BE', index=2, suffix='_de_BE'),
          LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
         
         >>> pprint(site.language_dict)
         {'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
-         'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
-         'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
-         'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+         u'de_BE': LanguageInfo(django_code='de-be', name=u'de_BE', index=2, suffix='_de_BE'),
+         'en': LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix=''),
+         u'en_US': LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix=''),
          'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
+        
+        >>> site.startup()
+        >>> pprint(site.django_settings['LANGUAGES']) #doctest: +ELLIPSIS
+        [('de', 'German'), ('fr', 'French')]
         
         """
         
@@ -283,7 +288,7 @@ class Site(Site):
                 suffix = ''
             else:
                 suffix = '_' + name
-            info = LanguageInfo(django_code,name,i,suffix)
+            info = LanguageInfo(django_code,name,i,str(suffix))
             self.language_dict[name] = info
             languages.append(info)
             
@@ -319,8 +324,9 @@ class Site(Site):
             if you use `django.contrib.humanize`
             https://code.djangoproject.com/ticket/20059
             """
-            # back since 20131017
-            self.update_settings(LANGUAGES = [(lng.django_code,lng.name) for lng in self.languages])
+            # reduce LANGUAGES to my babel languages
+            # cannot do this here because lng.name is not yet translated
+            #~ self.update_settings(LANGUAGES = [(lng.django_code,lng.name) for lng in self.languages])
                     
 
     def do_site_startup(self):
@@ -378,6 +384,11 @@ class Site(Site):
             because some test cases in django.contrib.humanize rely on en-us as default language
             """
             #~ set_language(self.get_default_language())
+            
+            """
+            reduce LANGUAGES to my babel languages:
+            """
+            self.update_settings(LANGUAGES = [x for x in settings.LANGUAGES if self.LANGUAGE_DICT.has_key(x[0])])
 
     def get_language_info(self,code):
         """
@@ -392,7 +403,7 @@ class Site(Site):
         
         >>> from north import TestSite as Site
         >>> Site(languages="en-us fr de-be de").get_language_info('en')
-        LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
+        LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix='')
         
         
         On a site with two locales of a same language (e.g. 'en-us' and 'en-gb'), 
@@ -400,7 +411,7 @@ class Site(Site):
         
         >>> site = Site(languages="en-us en-gb")
         >>> print site.get_language_info('en')
-        LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
+        LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix='')
         
         """
         return self.language_dict.get(code,None)
@@ -754,3 +765,11 @@ class TestSite(Site):
         #~ pass
         
 
+
+#~ def _test():
+    #~ import doctest
+    #~ doctest.testmod()
+#~ 
+#~ if __name__ == "__main__":
+    #~ _test()
+#~ 

@@ -13,6 +13,6 @@ __version__ = SETUP_INFO['version'] #
 
 intersphinx_url = "http://north.lino-framework.org"
 
-from north.site import Site
+from .north_site import Site, TestSite
 #~ from site import TestSite, LanguageInfo
 
