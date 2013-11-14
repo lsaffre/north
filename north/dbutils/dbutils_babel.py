@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 
-babelattr = settings.SITE.babelattr
+#~ babelattr = settings.SITE.babelattr
 LANGUAGE_CODE_MAX_LENGTH = 5
 
 
@@ -84,7 +84,7 @@ class BabelNamed(models.Model):
     name = BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     def __unicode__(self):
-        return babelattr(self,'name')
+        return settings.SITE.babelattr(self,'name')
     
             
                 

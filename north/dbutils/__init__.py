@@ -78,19 +78,21 @@ from dbutils_babel import LANGUAGE_CODE_MAX_LENGTH
 
 from north.utils import to_locale
 
-
-
 #~ dtos = settings.SITE.dtos
 #~ dtosl = settings.SITE.dtosl
 #~ set_language = settings.SITE.set_language
 #~ kw2fields = settings.SITE.kw2fields
-babelkw = settings.SITE.babelkw
-field2kw = settings.SITE.field2kw
-babel_values = settings.SITE.babelkw # old alias for backwards compatibility
-babelattr = settings.SITE.babelattr
-babelitem = settings.SITE.babelitem
+#~ babelkw = settings.SITE.babelkw
+#~ field2kw = settings.SITE.field2kw
+#~ babel_values = settings.SITE.babelkw # old alias for backwards compatibility
+#~ babelattr = settings.SITE.babelattr
+#~ babelitem = settings.SITE.babelitem
 #~ getattr_lang = babelattr
     
+
+def babelkw(*args,**kw) : return settings.SITE.babelkw(*args,**kw)
+def babelattr(*args,**kw) : return settings.SITE.babelattr(*args,**kw)
+babel_values = babelkw # old alias for backwards compatibility
 
 
 
