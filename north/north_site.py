@@ -3,6 +3,90 @@
 """
 This defines the :class:`Site` class.
 
+List of attributes and methods of `settings.SITE` which 
+application developers should know:
+
+.. setting:: field2kw
+
+Method ``field2kw(obj,name,**known_values)``
+
+Examples:
+
+>>> from north import TestSite as Site
+>>> from atelier.utils import AttrDict
+>>> def testit(site_languages):
+...     site = Site(languages=site_languages)
+...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))
+...     return site,obj
+
+
+>>> site,obj = testit('de en')
+>>> site.field2kw(obj,'name')
+{'de': 'Hallo', 'en': 'Hello'}
+
+>>> site,obj = testit('fr et')
+>>> site.field2kw(obj,'name')
+{'fr': 'Salut'}
+
+        
+
+
+.. setting:: babelitem
+
+``babelitem(*args,**values)``
+
+Given a dictionary with babel values, return the 
+value corresponding to the current language.
+
+This is available in templates as a function `tr`.
+
+>>> kw = dict(de="Hallo",en="Hello",fr="Salut")
+
+>>> from north import TestSite as Site
+>>> from django.utils import translation
+
+A Site with default language "de":
+
+>>> site = Site(languages="de en")
+>>> tr = site.babelitem
+>>> with translation.override('de'):
+...    tr(**kw)
+'Hallo'
+
+>>> with translation.override('en'):
+...    tr(**kw)
+'Hello'
+
+If the current language is not found in the specified `values`,
+then it returns the site's default language ("de" in our example):
+
+>>> with translation.override('jp'):
+...    tr(en="Hello",de="Hallo",fr="Salut")
+'Hallo'
+
+Another way is to specify an explicit default value using a
+positional argument. In that case the language's default language
+doesn'n matter:
+
+>>> with translation.override('jp'):
+...    tr("Hello",de="Hallo",fr="Salut")
+'Hello'
+
+>>> with translation.override('de'):
+...     tr("Hello",de="Hallo",fr="Salut")
+'Hallo'
+
+You may not specify more than one default value:
+
+>>> tr("Hello","Hallo")
+Traceback (most recent call last):
+...
+ValueError: ('Hello', 'Hallo') is more than 1 default value.
+
+
+>>> 
+
+
 """
 
 #~ from __future__ import unicode_literals
@@ -543,27 +627,6 @@ class Site(Site):
             
 
     def field2kw(self,obj,name,**known_values):
-        """
-        Examples:
-        
-        >>> from north import TestSite as Site
-        >>> from atelier.utils import AttrDict
-        >>> def testit(site_languages):
-        ...     site = Site(languages=site_languages)
-        ...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))
-        ...     return site,obj
-        
-        
-        >>> site,obj = testit('de en')
-        >>> site.field2kw(obj,'name')
-        {'de': 'Hallo', 'en': 'Hello'}
-        
-        >>> site,obj = testit('fr et')
-        >>> site.field2kw(obj,'name')
-        {'fr': 'Salut'}
-        
-        
-        """
         #~ d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lng in self.languages:
             v = getattr(obj,name+lng.suffix,None)
@@ -595,58 +658,6 @@ class Site(Site):
       
 
     def babelitem(self,*args,**values):
-        """
-        Given a dictionary with babel values, return the 
-        value corresponding to the current language.
-        
-        This is available in templates as a function `tr`.
-        
-        >>> kw = dict(de="Hallo",en="Hello",fr="Salut")
-        
-        >>> from north import TestSite as Site
-        >>> from django.utils import translation
-        
-        A Site with default language "de":
-        
-        >>> site = Site(languages="de en")
-        >>> tr = site.babelitem
-        >>> with translation.override('de'):
-        ...    tr(**kw)
-        'Hallo'
-        
-        >>> with translation.override('en'):
-        ...    tr(**kw)
-        'Hello'
-
-        If the current language is not found in the specified `values`,
-        then it returns the site's default language ("de" in our example):
-        
-        >>> with translation.override('jp'):
-        ...    tr(en="Hello",de="Hallo",fr="Salut")
-        'Hallo'
-        
-        Another way is to specify an explicit default value using a
-        positional argument. In that case the language's default language
-        doesn'n matter:
-        
-        >>> with translation.override('jp'):
-        ...    tr("Hello",de="Hallo",fr="Salut")
-        'Hello'
-        
-        >>> with translation.override('de'):
-        ...     tr("Hello",de="Hallo",fr="Salut")
-        'Hallo'
-        
-        You may not specify more than one default value:
-        
-        >>> tr("Hello","Hallo")
-        Traceback (most recent call last):
-        ...
-        ValueError: ('Hello', 'Hallo') is more than 1 default value.
-        
-        
-        >>> 
-        """
         from django.utils import translation
         if len(args) == 0:
             info = self.language_dict.get(translation.get_language(),self.DEFAULT_LANGUAGE)
