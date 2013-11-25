@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2013 by Luc Saffre.
-## License: BSD, see LICENSE for more details.
+# Copyright 2009-2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 """
 Generic support for :ref:`mldbc`.
 
@@ -66,7 +66,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangosite.dbutils import monthname
 #~ from djangosite.dbutils import set_language
-from djangosite.dbutils import dtomy # obsolete. use fdmy instead
+from djangosite.dbutils import dtomy  # obsolete. use fdmy instead
 from djangosite.dbutils import fdmy
 
 from dbutils_babel import BabelCharField, BabelTextField, BabelNamed
@@ -84,21 +84,23 @@ from north.utils import to_locale
 #~ kw2fields = settings.SITE.kw2fields
 #~ babelkw = settings.SITE.babelkw
 #~ field2kw = settings.SITE.field2kw
-#~ babel_values = settings.SITE.babelkw # old alias for backwards compatibility
+# ~ babel_values = settings.SITE.babelkw # old alias for backwards compatibility
 #~ babelattr = settings.SITE.babelattr
 #~ babelitem = settings.SITE.babelitem
 #~ getattr_lang = babelattr
-    
-
-def babelkw(*args,**kw) : return settings.SITE.babelkw(*args,**kw)
-def babelattr(*args,**kw) : return settings.SITE.babelattr(*args,**kw)
-babel_values = babelkw # old alias for backwards compatibility
 
 
+def babelkw(*args, **kw):
+    return settings.SITE.babelkw(*args, **kw)
 
+
+def babelattr(*args, **kw):
+    return settings.SITE.babelattr(*args, **kw)
+babel_values = babelkw  # old alias for backwards compatibility
 
 
 class UnresolvedModel:
+
     """
     This is the object returned by :func:`resolve_model` 
     if the specified model is not installed.
@@ -114,19 +116,22 @@ class UnresolvedModel:
     below in such situations...
     
     """
-    def __init__(self,model_spec,app_label):
+
+    def __init__(self, model_spec, app_label):
         self.model_spec = model_spec
         self.app_label = app_label
         #~ print(self)
-        
+
     def __repr__(self):
-        return self.__class__.__name__ + '(%s,%s)' % (self.model_spec,self.app_label)
-        
+        return self.__class__.__name__ + '(%s,%s)' % (self.model_spec, self.app_label)
+
     #~ def __getattr__(self,name):
         #~ raise AttributeError("%s has no attribute %r" % (self,name))
 
 #~ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
-def resolve_model(model_spec,app_label=None,strict=False):
+
+
+def resolve_model(model_spec, app_label=None, strict=False):
     """
     Return the class object of the specified model.
     This works also in combination  with :attr:`lino.Site.override_modlib_models`,
@@ -145,92 +150,103 @@ def resolve_model(model_spec,app_label=None,strict=False):
     
     See also django.db.models.fields.related.add_lazy_relation()
     """
-    #~ models.get_apps() # trigger django.db.models.loading.cache._populate()
-    if isinstance(model_spec,basestring):
+    # ~ models.get_apps() # trigger django.db.models.loading.cache._populate()
+    if isinstance(model_spec, basestring):
         if '.' in model_spec:
             app_label, model_name = model_spec.split(".")
         else:
             model_name = model_spec
-            
+
         #~ try:
             #~ app_label, model_name = model_spec.split(".")
         #~ except ValueError:
-            #~ # If we can't split, assume a model in current app
-            #~ #app_label = rpt.app_label
+            # ~ # If we can't split, assume a model in current app
+            # ~ #app_label = rpt.app_label
             #~ model_name = model_spec
-            
-        model = models.get_model(app_label,model_name,seed_cache=False)
+
+        model = models.get_model(app_label, model_name, seed_cache=False)
         #~ model = models.get_model(app_label,model_name,seed_cache=seed_cache)
     else:
         model = model_spec
-    if not isinstance(model,type) or not issubclass(model,models.Model):
+    if not isinstance(model, type) or not issubclass(model, models.Model):
         if strict:
             if False:
                 from django.db.models import loading
                 print(20130219, settings.INSTALLED_APPS)
                 print(loading.get_models())
                 #~ if len(loading.cache.postponed) > 0:
-              
-            if isinstance(strict,basestring):
+
+            if isinstance(strict, basestring):
                 raise Exception(strict % model_spec)
             raise ImportError(
                 #~ "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 "resolve_model(%r,app_label=%r) found %r (settings %s, INSTALLED_APPS=%s)" % (
-                #~ model_spec,app_label,model,settings.SETTINGS_MODULE))
-                model_spec,app_label,model,settings.SETTINGS_MODULE,settings.INSTALLED_APPS))
+                    #~ model_spec,app_label,model,settings.SETTINGS_MODULE))
+                    model_spec, app_label, model, settings.SETTINGS_MODULE, settings.INSTALLED_APPS))
         #~ logger.info("20120628 unresolved %r",model)
-        return UnresolvedModel(model_spec,app_label)
+        return UnresolvedModel(model_spec, app_label)
     return model
-    
-def old_resolve_model(model_spec,app_label=None,strict=False):
+
+
+def old_resolve_model(model_spec, app_label=None, strict=False):
     """
     doesn't work for contacts.Company because the model is defined somewhere else.
     """
-    models.get_apps() # trigger django.db.models.loading.cache._populate()
-    if isinstance(model_spec,basestring):
+    models.get_apps()  # trigger django.db.models.loading.cache._populate()
+    if isinstance(model_spec, basestring):
         if '.' in model_spec:
             app_label, model_name = model_spec.split(".")
         else:
             model_name = model_spec
         app = resolve_app(app_label)
-        model = getattr(app,model_name,None)
+        model = getattr(app, model_name, None)
     else:
         model = model_spec
-    if not isinstance(model,type) or not issubclass(model,models.Model):
+    if not isinstance(model, type) or not issubclass(model, models.Model):
         if strict:
             raise Exception(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
-                model_spec,app_label,model,settings.SETTINGS_MODULE))
-        return UnresolvedModel(model_spec,app_label)
+                    model_spec, app_label, model, settings.SETTINGS_MODULE))
+        return UnresolvedModel(model_spec, app_label)
     return model
-    
 
 
-
-def format_date(d,format='medium'):
-    if not d: return ''
+def format_date(d, format='medium'):
+    if not d:
+        return ''
     return babel_format_date(d, format=format,
-        locale=to_locale(translation.get_language()))
-    
+                             locale=to_locale(translation.get_language()))
+
 #~ def dtos(d):
     #~ return format_date(d, format='short')
-    
+
 #~ def dtosm(d):
     #~ return format_date(d,format='medium')
-        
+
 #~ def dtosl(d):
     #~ return format_date(d, format='full')
-    
-def fdf(d): return format_date(d, format='full')
-def fdl(d): return format_date(d, format='long')
-def fdm(d) : return format_date(d, format='medium')
-def fds(d): return format_date(d, format='short')
+
+
+def fdf(d):
+    return format_date(d, format='full')
+
+
+def fdl(d):
+    return format_date(d, format='long')
+
+
+def fdm(d):
+    return format_date(d, format='medium')
+
+
+def fds(d):
+    return format_date(d, format='short')
 
 # backwards compatibility:
-dtosl = fdf 
+dtosl = fdf
 dtosm = fdm
 dtos = fds
-    
+
+
 def day_and_month(d):
-    return format_date(d,"dd. MMMM")
-    
+    return format_date(d, "dd. MMMM")

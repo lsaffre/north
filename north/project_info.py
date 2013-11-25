@@ -1,13 +1,13 @@
-## Copyright 2013 by Luc Saffre.
-## License: BSD, see LICENSE for more details.
+# Copyright 2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 
 SETUP_INFO = dict(
-  name = 'North',
-  version = '0.1.7', 
-  install_requires = ['djangosite','Babel'],
-  test_suite = 'tests',
-  description = "Another way to migrate Django databases",
-  #~ long_description=open('README.txt').read(),
+    name='North',
+    version='0.1.7',
+    install_requires=['djangosite', 'Babel'],
+    test_suite='tests',
+    description="Another way to migrate Django databases",
+    #~ long_description=open('README.txt').read(),
   long_description="""\
 North is a Django extension which lets you write database fixtures and 
 make database dumps in Python.
@@ -38,11 +38,12 @@ Instantiating a North Site will install sensible default values
 for certain Django settings, including `INSTALLED_APPS` and 
 `SERIALIZATION_MODULES`.
 """,
-  license = 'Free BSD',
-  packages = ['north','north.dbutils', 'north.demo','north.management','north.management.commands'],
-  author = 'Luc Saffre',
-  author_email = 'luc.saffre@gmail.com',
-  url = "http://north.lino-framework.org",
+    license='Free BSD',
+    packages=['north', 'north.dbutils', 'north.demo',
+              'north.management', 'north.management.commands'],
+    author='Luc Saffre',
+    author_email='luc.saffre@gmail.com',
+    url="http://north.lino-framework.org",
   classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2.6
@@ -57,5 +58,3 @@ for certain Django settings, including `INSTALLED_APPS` and
   Operating System :: OS Independent
   Topic :: Database :: Front-Ends
   Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
-
-

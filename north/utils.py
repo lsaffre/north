@@ -12,7 +12,8 @@ from __future__ import unicode_literals
 #~ logger = logging.getLogger(__name__)
 
 import collections
-LanguageInfo = collections.namedtuple('LanguageInfo', ('django_code','name','index','suffix'))
+LanguageInfo = collections.namedtuple(
+    'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
 
 
 def to_locale(language):
@@ -25,15 +26,15 @@ def to_locale(language):
     p = language.find('-')
     if p >= 0:
         # Get correct locale for sr-latn
-        if len(language[p+1:]) > 2:
-            return language[:p].lower()+'_'+language[p+1].upper()+language[p+2:].lower()
-        return language[:p].lower()+'_'+language[p+1:].upper()
+        if len(language[p + 1:]) > 2:
+            return language[:p].lower() + '_' + language[p + 1].upper() + language[p + 2:].lower()
+        return language[:p].lower() + '_' + language[p + 1:].upper()
     else:
-        return language.lower() 
-        
+        return language.lower()
 
 
 class Cycler:
+
     """
     Turns a list of items into an endless loop.
     Useful when generating demo fixtures.
@@ -62,14 +63,15 @@ class Cycler:
     None None None
     
     """
-    def __init__(self,*args):
+
+    def __init__(self, *args):
         """
         If there is exactly one argument, then this must be an iterable
         and will be used as the list of items to cycle on.
         If there is more than one positional argument, then these 
         arguments themselves will be the list of items.
         """
-        
+
         if len(args) == 0:
             self.items = []
         elif len(args) == 1:
@@ -77,24 +79,23 @@ class Cycler:
         else:
             self.items = args
         self.current = 0
-        
+
     def pop(self):
-        if len(self.items) == 0: return None
+        if len(self.items) == 0:
+            return None
         item = self.items[self.current]
         self.current += 1
         if self.current >= len(self.items):
             self.current = 0
-        if isinstance(item,Cycler):
+        if isinstance(item, Cycler):
             return item.pop()
         return item
-        
+
     def __len__(self):
         return len(self.items)
-        
+
     def reset(self):
         self.current = 0
-        
-
 
 
 def _test():
@@ -103,4 +104,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-
