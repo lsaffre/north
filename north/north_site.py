@@ -98,39 +98,6 @@ from utils import to_locale, LanguageInfo
 
 gettext_noop = lambda s: s
 
-#~ gettext = lambda s: s
-
-# ~ # todo: remove this
-#~ def language_choices(*args):
-    #~ """
-    #~ A subset of Django's LANGUAGES.
-    #~ See :doc:`/blog/2011/0226`.
-    #~ """
-    #~ _langs = dict(
-        #~ en=gettext('English'),
-        #~ de=gettext('German'),
-        #~ fr=gettext('French'),
-        #~ nl=gettext('Dutch'),
-        #~ et=gettext('Estonian'),
-    #~ )
-    #~ return [(x,_langs[x]) for x in args]
-
-
-#~ LANGUAGE_CODE_MAX_LENGTH = 2
-#~ """
-#~ """
-
-#~ def simplified_code(code):
-    #~ """
-    #~ We store only the main code, supposing that nobody maintains
-    #~ multilingual database content for different variants of the
-    #~ same language.
-    #~ """
-    #~ return code[:LANGUAGE_CODE_MAX_LENGTH].strip()
-
-#~ DEFAULT_LANGUAGE = simplified_code(settings.LANGUAGE_CODE)
-
-
 class NOT_PROVIDED:
     pass
 
