@@ -172,7 +172,7 @@ class Site(Site):
 
     A string of django codes of languages that should be hidden.
 
-    :ref:`welfare` uses this because the demo database has 4 
+    Lino Welfare uses this because the demo database has 4 
     languages, but `nl` is currently hidden bu default.
         
 
