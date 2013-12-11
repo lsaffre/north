@@ -245,8 +245,8 @@ class Site(Site):
     def apply_languages(self):
         """
         This function is called when a Site objects get instantiated,
-        i.e. while Django is still loading the settings. It analyzes 
-        the attribute `languages` and converts it to a tuple of 
+        i.e. while Django is still loading the settings. It analyzes
+        the attribute `languages` and converts it to a tuple of
         `LanguageInfo` objects.
         
         >>> from django.utils import translation
@@ -296,7 +296,8 @@ class Site(Site):
         
         """
 
-        if isinstance(self.languages, tuple) and isinstance(self.languages[0], LanguageInfo):
+        if isinstance(self.languages, tuple) \
+           and isinstance(self.languages[0], LanguageInfo):
             # e.g. override_defaults() has been called explicitly, without
             # specifying a languages keyword.
             return
@@ -374,21 +375,21 @@ class Site(Site):
             if you use `django.contrib.humanize`
             https://code.djangoproject.com/ticket/20059
             """
-            # reduce LANGUAGES to my babel languages
-            # cannot do this here because lng.name is not yet translated
-            #~ self.update_settings(LANGUAGES = [(lng.django_code,lng.name) for lng in self.languages])
 
-    def do_site_startup(self):
-        """
-        Called by :meth:`djangosite.Site.startup`.
-        """
-        super(Site, self).do_site_startup()
+            self.setup_languages()
 
-        from django.conf import settings
+    def setup_languages(self):
+        """
+        Reduce Django's :setting:`LANGUAGES` to my `languages`.
+        Note that lng.name are not yet translated, we take these
+        from `django.conf.global_settings`.
+        """
+
+        from django.conf.global_settings import LANGUAGES
         from django.utils.translation import ugettext_lazy as _
 
         def langtext(code):
-            for k, v in settings.LANGUAGES:
+            for k, v in LANGUAGES:
                 if k == code:
                     return v
             # returns None if not found
@@ -420,7 +421,7 @@ class Site(Site):
                         raise Exception(
                             "Unknown language code %r (must be one of %s)" % (
                                 lang.django_code,
-                                [x[0] for x in settings.LANGUAGES]))
+                                [x[0] for x in LANGUAGES]))
 
                 text = _(text)
                 _add_language(lang.django_code, text)
@@ -436,7 +437,7 @@ class Site(Site):
             reduce LANGUAGES to my babel languages:
             """
             self.update_settings(
-                LANGUAGES=[x for x in settings.LANGUAGES
+                LANGUAGES=[x for x in LANGUAGES
                            if x[0] in self.LANGUAGE_DICT])
 
     def get_language_info(self, code):
