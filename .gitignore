@@ -11,3 +11,5 @@ htmlcov
 docs/api
 tmp
 test.db
+*~
+

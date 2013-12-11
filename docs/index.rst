@@ -28,6 +28,7 @@ Contents
 
    backup
    migrations
+   settings
    dpy
    babel
    tutorials/index
