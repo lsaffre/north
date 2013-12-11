@@ -3,37 +3,42 @@ from unipath import Path
 ROOTDIR = Path(__file__).parent.parent
 
 # load  SETUP_INFO:
-execfile(ROOTDIR.child('north','project_info.py'),globals())
+execfile(ROOTDIR.child('north', 'project_info.py'), globals())
 
 from djangosite.utils.pythontest import TestCase
 
-class BaseTestCase(TestCase):
-    demo_settings_module = "north.demo.settings" 
-    #~ default_environ = dict(DJANGO_SETTINGS_MODULE="lino.projects.std.settings")
-    project_root = ROOTDIR
-    
-class BasicTests(BaseTestCase):
-    def test_z01(self): 
-        self.assertEqual(1+1,2)
 
-    def test_site(self): self.run_simple_doctests('north/north_site.py')
-    def test_utils(self): self.run_simple_doctests('north/utils.py')
-    def test_dbutils(self): self.run_simple_doctests('north/dbutils.py')
-    def test_catalog(self): self.run_docs_django_tests('tutorials.catalog.settings')
-    def test_polls(self): self.run_django_manage_test('docs/tutorials/polls')
+class BaseTestCase(TestCase):
+    demo_settings_module = "north.demo.settings"
+    project_root = ROOTDIR
+
+
+class BasicTests(BaseTestCase):
+
+    def test_z01(self):
+        self.assertEqual(1+1, 2)
+
+    def test_site(self):
+        self.run_simple_doctests('north/north_site.py')
+
+    def test_utils(self):
+        self.run_simple_doctests('north/utils.py')
+
+    def test_dbutils(self):
+        self.run_simple_doctests('north/dbutils.py')
+
+    def test_catalog(self):
+        self.run_docs_django_tests('tutorials.catalog.settings')
+
+    def test_polls(self):
+        self.run_django_manage_test('docs/tutorials/polls')
+
 
 class PackagesTests(BaseTestCase):
-    def test_packages(self): self.run_packages_test(SETUP_INFO['packages'])
+
+    def test_packages(self):
+        self.run_packages_test(SETUP_INFO['packages'])
 
 
-#~ env.django_doctests.append('tutorials.catalog.settings')
 
-# invoke only these with ``fab t4``:
-#~ env.simple_doctests.append('north/__init__.py')
-
-# invoke only these with ``fab t7``:
-#~ env.bash_tests.append('python docs/tutorials/polls/manage.py test polls')
-
-# invoke only these with ``fab t5``:
-#~ env.django_databases.append('docs/tutorials/polls')
 

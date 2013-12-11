@@ -386,7 +386,6 @@ class Site(Site):
 
         from django.conf import settings
         from django.utils.translation import ugettext_lazy as _
-        #~ from north.dbutils import set_language
 
         def langtext(code):
             for k, v in settings.LANGUAGES:
@@ -397,8 +396,6 @@ class Site(Site):
         def _add_language(code, lazy_text):
             self.LANGUAGE_DICT[code] = lazy_text
             self.LANGUAGE_CHOICES.append((code, lazy_text))
-
-        #~ _add_language(DEFAULT_LANGUAGE,_(langtext(settings.LANGUAGE_CODE)))
 
         if self.languages is None:
 
@@ -422,15 +419,16 @@ class Site(Site):
                     else:
                         raise Exception(
                             "Unknown language code %r (must be one of %s)" % (
-                                lang.django_code, [x[0] for x in settings.LANGUAGES]))
-                        #~ return "English"
+                                lang.django_code,
+                                [x[0] for x in settings.LANGUAGES]))
 
                 text = _(text)
                 _add_language(lang.django_code, text)
 
             """
             Cannot activate the site's default language
-            because some test cases in django.contrib.humanize rely on en-us as default language
+            because some test cases in django.contrib.humanize
+            rely on en-us as default language
             """
             #~ set_language(self.get_default_language())
 
@@ -438,7 +436,8 @@ class Site(Site):
             reduce LANGUAGES to my babel languages:
             """
             self.update_settings(
-                LANGUAGES=[x for x in settings.LANGUAGES if self.LANGUAGE_DICT.has_key(x[0])])
+                LANGUAGES=[x for x in settings.LANGUAGES
+                           if x[0] in self.LANGUAGE_DICT])
 
     def get_language_info(self, code):
         """
