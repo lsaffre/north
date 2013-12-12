@@ -92,7 +92,6 @@ class Command(BaseCommand):
     def write_files(self):
         logger.info("Writing %s...", self.main_file)
         self.stream = open(self.main_file, 'wt')
-        #~ name,current_version,url = settings.SITE.using().next()
         current_version = settings.SITE.version
         #~ if '+' in current_version:
             #~ logger.warning(

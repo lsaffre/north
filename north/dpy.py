@@ -120,7 +120,6 @@ class Serializer(base.Serializer):
         self.selected_fields = options.get("fields")
         self.use_natural_keys = options.get("use_natural_keys", False)
         if self.write_preamble:
-            #~ name,current_version,url = settings.SITE.using().next()
             current_version = settings.SITE.version
             if '+' in current_version:
                 logger.warning(
@@ -728,7 +727,6 @@ def install_migrations(self, globals_dict):
 
     current_version = self.version
 
-    #~ name,current_version,url = self.using().next()
     if current_version is None:
         logger.info("Unversioned Lino instance : no database migration")
         return

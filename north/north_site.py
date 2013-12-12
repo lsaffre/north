@@ -104,7 +104,7 @@ class Site(Site):
         from .dpy import install_migrations
         install_migrations(self, *args)
 
-    def using(self, ui=None):
+    def get_used_libs(self, html=None):
         """
         Adds North and Babel to the list of displayed versions.
         """
@@ -112,7 +112,7 @@ class Site(Site):
         import north
         yield ("North", north.SETUP_INFO['version'], north.SETUP_INFO['url'])
 
-        for u in super(Site, self).using(ui):
+        for u in super(Site, self).get_used_libs(html):
             yield u
 
         import babel
