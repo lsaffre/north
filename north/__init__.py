@@ -15,3 +15,4 @@ intersphinx_url = "http://north.lino-framework.org"
 
 from .north_site import Site, TestSite
 #~ from site import TestSite, LanguageInfo
+srcref_url = 'https://github.com/lsaffre/lino-north/blob/master/%s'
