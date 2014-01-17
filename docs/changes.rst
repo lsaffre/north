@@ -4,11 +4,11 @@
 Changes in `North`
 ==================
 
-See the author's :ref:`Developer Blog <blog>`
+See the author's 
+`Developer Blog <http://docs.lino-framework.org/blog>`_
 to get detailed news.
-The final truth about what's going on is only 
-`The Source Code <http://code.google.com/p/django-north/source/list>`_
-(hosted on `Googlecode <http://code.google.com/p/django-north>`__).
+The final truth about what's going on is the source code.
+
 
 Version 0.1.4 (in development)
 ============================================

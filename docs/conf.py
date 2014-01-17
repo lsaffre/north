@@ -1,27 +1,16 @@
 # -*- coding: utf-8 -*-
 import sys, os
 from atelier.sphinxconf import configure
-configure(globals(),settings_module_name='settings')
+configure(globals(), settings_module_name='settings')
 
 import north
-
-primary_domain = 'py'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
 
-# The suffix of source filenames.
-source_suffix = '.rst'
-
-# The encoding of source files.
-#source_encoding = 'utf-8'
-
-# The master toctree document.
-master_doc = 'index'
-
 # General information about the project.
-project = u"north"
-copyright = u'2002-2013, Luc Saffre'
+project = "north"
+copyright = '2002-2014, Luc Saffre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -70,9 +59,6 @@ exclude_trees = [
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
 #show_authors = False
-
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
 
 
 # Options for HTML output

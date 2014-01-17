@@ -34,19 +34,27 @@ It is of course recommended to stop any other processes
 which might access your database during the whole procedure.
 
 
-The Double Dump Test (DDT)
---------------------------
+.. _ddt:
 
-When :xfile:`restore.py`
-successfully terminated without any warnings 
-and error messages, 
-then there are good chances 
-that your database has been successfully migrated. 
+Double Dump Test (DDT)
+----------------------
 
-But here is one more automated test that you may run 
-when everything seems okay.
+A `Double Dump Test` is a method to test for possible problems
+e.g. after a :ref:`datamig`: we make a first dump of the database to a
+Python fixture `a.py`, then we load that picture to the database, then
+we make a second dump to a fixture `b.py`.  And finally we launch
+`diff a.py b.py` to verify that both pictures are identical.
 
-This so-called :ref:`ddt` consists of the following steps:
+Background:
+
+When :xfile:`restore.py` successfully terminated without any warnings
+and error messages, then there are good chances that your database has
+been successfully migrated.
+
+But here is one more automated test that you may run when everything
+seems okay: a :ref:`ddt`. 
+
+This consists of the following steps:
 
 - make another dump of the freshly migrated database 
   to a directory `a`.

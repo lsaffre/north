@@ -10,7 +10,7 @@ Welcome to the :ref:`north` project documentation.
 .. py2rst::
 
   import north
-  print north.SETUP_INFO['long_description']
+  print(north.SETUP_INFO['long_description'])
 
 
 Related projects
