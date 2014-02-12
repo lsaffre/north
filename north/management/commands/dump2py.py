@@ -205,6 +205,9 @@ def bv2kw(fieldname, values):
         #~ used_models = set()
 
         self.stream.write("""
+def after_load(loader):
+    pass
+
 def main():
     settings.SITE.startup()
     from django.core.management import call_command
@@ -244,6 +247,8 @@ def main():
             #~ self.stream.write('\nfilename = os.path.join(os.path.dirname(__file__),"%s.py")\n' % )
             self.stream.write('    execfile("%s.py")\n' % model._meta.db_table)
 
+        self.stream.write(
+            '    after_load(loader)\n')
         self.stream.write(
             '    logger.info("Loaded %d objects",loader.count_objects)\n')
         self.stream.write("""

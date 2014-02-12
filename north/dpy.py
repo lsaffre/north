@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 by Luc Saffre.
+# Copyright 2009-2014 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
 """
@@ -681,7 +681,7 @@ See <https://code.djangoproject.com/ticket/18213>.
             """
             #~ raise Exception(msg)
 
-        if hasattr(module, 'after_load'):
+        if hasattr(module, 'after_load'):  # deprecated
             module.after_load()
 
 
