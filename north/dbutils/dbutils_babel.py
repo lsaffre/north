@@ -96,9 +96,9 @@ class BabelNamed(models.Model):
 
 class LanguageField(models.CharField):
 
-    """
-    A field that lets the user select 
-    a language from the available babel languages.
+    """A field that lets the user select a language from the available
+    babel languages.
+
     """
 
     def __init__(self, *args, **kw):

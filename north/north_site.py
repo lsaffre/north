@@ -207,7 +207,7 @@ class Site(Site):
             https://code.djangoproject.com/ticket/20059
             """
 
-            self.setup_languages()
+        self.setup_languages()
 
     def setup_languages(self):
         """
