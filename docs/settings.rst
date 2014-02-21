@@ -47,6 +47,7 @@ and
                            'NAME': '...default.db'}},
  'FIXTURE_DIRS': (),
  'INSTALLED_APPS': ('north', 'djangosite'),
+ 'LANGUAGES': [],
  'LOCALE_PATHS': (),
  'SECRET_KEY': '20227',
  'SERIALIZATION_MODULES': {'py': 'north.dpy'},

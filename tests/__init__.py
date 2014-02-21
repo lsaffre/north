@@ -28,10 +28,11 @@ class BasicTests(BaseTestCase):
         self.run_simple_doctests('north/utils.py')
 
     def test_dbutils(self):
-        self.run_simple_doctests('north/dbutils.py')
+        self.run_simple_doctests('north/dbutils/__init__.py')
 
     def test_catalog(self):
-        self.run_docs_django_tests('tutorials.catalog.settings')
+        # self.run_docs_django_tests('tutorials.catalog.settings')
+        self.run_django_manage_test('docs/tutorials/catalog')
 
     def test_polls(self):
         self.run_django_manage_test('docs/tutorials/polls')

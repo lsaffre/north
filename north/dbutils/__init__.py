@@ -1,19 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 by Luc Saffre.
+# Copyright 2009-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""
-Generic support for :ref:`mldbc`.
+"""Generic support for :ref:`mldbc`.
 
-This includes definition of *babel fields* in your Django Models 
-as well as methods to access these fields.
+This includes definition of *babel fields* in your Django Models as
+well as methods to access these fields.
 
-Babel fields are fields defined using 
-:class:`BabelCharField`
-or
+Babel fields are fields defined using :class:`BabelCharField` or
 :class:`BabelTextField`.
 
-Each babel field generates a series of normal CharFields (or TextFields) 
-depending on your :setting:`languages` setting.
+Each babel field generates a series of normal CharFields (or
+TextFields) depending on your :setting:`languages` setting.
 
 Example::
 
@@ -27,8 +24,8 @@ This module also defines the model mixin :class:`BabelNamed`
 Date formatting functions
 -------------------------
 
-This module also includes shortcuts to `python-babel`'s 
-`date formatting functions <http://babel.pocoo.org/docs/dates/>`_
+This module also includes shortcuts to `python-babel`'s `date
+formatting functions <http://babel.pocoo.org/docs/dates/>`_
 
 >>> d = datetime.date(2013,8,26)
 >>> print(fds(d)) # short
@@ -39,7 +36,6 @@ Aug 26, 2013
 August 26, 2013
 >>> print(fdf(d)) # full
 Monday, August 26, 2013
-    
 
 """
 
@@ -77,18 +73,6 @@ from dbutils_babel import contribute_to_class
 from dbutils_babel import LANGUAGE_CODE_MAX_LENGTH
 
 from north.utils import to_locale
-
-#~ dtos = settings.SITE.dtos
-#~ dtosl = settings.SITE.dtosl
-#~ set_language = settings.SITE.set_language
-#~ kw2fields = settings.SITE.kw2fields
-#~ babelkw = settings.SITE.babelkw
-#~ field2kw = settings.SITE.field2kw
-# ~ babel_values = settings.SITE.babelkw # old alias for backwards compatibility
-#~ babelattr = settings.SITE.babelattr
-#~ babelitem = settings.SITE.babelitem
-#~ getattr_lang = babelattr
-
 
 def babelkw(*args, **kw):
     return settings.SITE.babelkw(*args, **kw)
