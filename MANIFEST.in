@@ -2,5 +2,4 @@ global-include *.txt *.py *.bat *.js *.css *.html \
   *.ico *.png \
   Makefile
 prune docs
-prune tmp
 

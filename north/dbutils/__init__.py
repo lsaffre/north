@@ -65,12 +65,12 @@ from djangosite.dbutils import monthname
 from djangosite.dbutils import dtomy  # obsolete. use fdmy instead
 from djangosite.dbutils import fdmy
 
-from dbutils_babel import BabelCharField, BabelTextField, BabelNamed
-from dbutils_babel import LanguageField
-from dbutils_babel import run_with_language
-from dbutils_babel import lookup_filter
-from dbutils_babel import contribute_to_class
-from dbutils_babel import LANGUAGE_CODE_MAX_LENGTH
+from north.dbutils.dbutils_babel import BabelCharField, BabelTextField, BabelNamed
+from north.dbutils.dbutils_babel import LanguageField
+from north.dbutils.dbutils_babel import run_with_language
+from north.dbutils.dbutils_babel import lookup_filter
+from north.dbutils.dbutils_babel import contribute_to_class
+from north.dbutils.dbutils_babel import LANGUAGE_CODE_MAX_LENGTH
 
 from north.utils import to_locale
 

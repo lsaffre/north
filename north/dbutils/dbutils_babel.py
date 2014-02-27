@@ -1,15 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 by Luc Saffre.
+# Copyright 2009-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 from __future__ import unicode_literals, print_function
 
 import logging
 logger = logging.getLogger(__name__)
-
-import sys
-import locale
-import datetime
 
 
 from django.db import models
