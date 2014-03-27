@@ -178,3 +178,17 @@ specify its name here.
 See :ref:`datamig`.
 
 
+
+.. setting:: loading_from_dump
+
+This is normally `False`, except when the process is loading data from
+a Python dump.
+
+The Python dump then calls :func:`north.dpy.install_migrations` which
+sets this to `True`.
+
+Application code should not change this setting (except for certain
+special test cases).
+
+
+

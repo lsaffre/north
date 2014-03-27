@@ -210,9 +210,9 @@ def after_load(loader):
 
 def main():
     settings.SITE.startup()
+    settings.SITE.install_migrations(globals())
     from django.core.management import call_command
     call_command('initdb', interactive=False)
-    settings.SITE.install_migrations(globals())
     loader = DpyLoader()
     os.chdir(os.path.dirname(__file__))
         
