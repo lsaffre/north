@@ -712,7 +712,7 @@ class Migrator(object):
     def after_load(self, todo):
         """Declare a function to be called after all data has been loaded."""
         assert callable(todo)
-        al = self.globals_dict.getdefault('AFTER_LOAD_HANDLERS', [])
+        al = self.globals_dict.setdefault('AFTER_LOAD_HANDLERS', [])
         al.append(todo)
 
 
