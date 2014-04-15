@@ -205,8 +205,12 @@ def bv2kw(fieldname, values):
         #~ used_models = set()
 
         self.stream.write("""
+
+AFTER_LOAD_HANDLERS = []  # populated by Migrator.after_load()
+
 def after_load(loader):
-    pass
+    for h in AFTER_LOAD_HANDLERS:
+        h(loader)
 
 def main():
     settings.SITE.startup()

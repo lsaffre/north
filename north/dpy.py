@@ -692,16 +692,28 @@ class DpyLoader(LoaderBase):
 
 
 def Deserializer(fp, **options):
-    """
-    The Deserializer used when ``manage.py loaddata`` encounters a `.py` fixture.
+    """The Deserializer used when ``manage.py loaddata`` encounters a
+    `.py` fixture.
+
     """
     d = DpyDeserializer()
     return d.deserialize(fp, **options)
 
 
 class Migrator(object):
-    def __init__(self, site):
+    """The SITE's Migrator class is instantiated by `install_migrations`.
+    Deserves documentation.
+
+    """
+    def __init__(self, site, globals_dict):
         self.site = site
+        self.globals_dict = globals_dict
+
+    def after_load(self, todo):
+        """Declare a function to be called after all data has been loaded."""
+        assert callable(todo)
+        al = self.globals_dict.getdefault('AFTER_LOAD_HANDLERS', [])
+        al.append(todo)
 
 
 def install_migrations(self, globals_dict):
@@ -746,7 +758,7 @@ def install_migrations(self, globals_dict):
 
     if self.migration_class is not None:
         mc = import_by_path(self.migration_class)
-        migrator = mc(self)
+        migrator = mc(self, globals_dict)
     else:
         migrator = self
 
