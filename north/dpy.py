@@ -106,11 +106,15 @@ def create_mti_child(parent_model, pk_, child_model, **kw):
 
 class Serializer(base.Serializer):
 
-    """
-    DEPRECATED. Use :manage:`dump2py` instead.
+    """Serializes a QuerySet to a py stream.
 
-    Serializes a QuerySet to a py stream.
     Usage: ``manage.py dumpdata --format py``
+
+    DEPRECATED. The problem with this approach is that a serializer
+    creates -by definition- one single file. And Python needs
+    -understandably- to load a module completely into memory before it
+    can be executed.  Use :manage:`dump2py` instead.
+
     """
 
     internal_use_only = False
