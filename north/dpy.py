@@ -500,7 +500,7 @@ class FlushDeferredObjects:
     pass
 
 
-class LoaderBase:
+class LoaderBase(object):
 
     quick = False
 
