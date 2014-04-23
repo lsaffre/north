@@ -526,10 +526,6 @@ class LoaderBase(object):
             self.saved = 0
             for obj in try_again:
                 obj.try_save()  # ,*args,**kw):
-                # ~ if obj.try_save(): # ,*args,**kw):
-                    #~ self.saved += 1
-                #~ else:
-                    #~ self.save_later.append(obj)
             logger.info("Saved %d instances.", self.saved)
 
     def expand(self, obj):
