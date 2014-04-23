@@ -478,31 +478,11 @@ class FakeDeserializedObject(base.DeserializedObject):
                     # order
                     logger.warning("Failed to save %s:" % obj2str(obj))
                     raise
-            if False:
-                """
-                20120906 deactivated this test. also fixtures from dump may yield instances without pk.
-                example migrate_from_1_4_10 adds pcsw.Third instances without pk, and which need to
-                get a second chance.
-                """
-                if obj.pk is None:
-                    """
-                    (no longer true:)
-                    presto.tim2lino creates invoices without pk which possibly fail to save
-                    on first attempt because their project
-                    """
-                    if True:
-                        msg = "Failed to save %s without %s: %s." % (
-                            obj.__class__, obj._meta.pk.attname, obj2str(obj))
-                        logger.warning(msg)
-                        raise
-                    else:
-                        logger.exception(e)
-                        raise Exception(msg)
             deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
             if not deps:
                 logger.exception(e)
-                raise Exception("Failed to save independent %s." %
-                                obj2str(obj))
+                raise Exception(
+                    "Failed to save independent %s." % obj2str(obj))
             self.deserializer.register_failure(self, e)
             return False
         #~ except Exception,e:
@@ -529,6 +509,7 @@ class LoaderBase:
         self.save_later = {}
         self.saved = 0
         self.count_objects = 0
+        self.AFTER_LOAD_HANDLERS = []  # populated by Migrator.after_load()
 
     def flush_deferred_objects(self):
         """
@@ -583,6 +564,39 @@ class LoaderBase:
         if len(l) == 0:
             logger.info("Deferred %s : %s", obj2str(obj.object), msg)
         l.append(obj)
+
+    def finalize(self):
+
+        self.flush_deferred_objects()
+
+        for h in self.AFTER_LOAD_HANDLERS:
+            h(self)
+    
+        logger.info("Loaded %d objects", self.count_objects)
+    
+        if self.save_later:
+            count = 0
+            s = ''
+            for model, msg_objects in self.save_later.items():
+                for msg, objects in msg_objects.items():
+                    if False:  # detailed content of the first object
+                        s += "\n- %s %s (%d object(s), e.g. %s)" % (
+                            full_model_name(model), msg, len(objects),
+                            obj2str(objects[0].object, force_detailed=True))
+                    else:  # pk of all objects
+                        s += "\n- %s %s (%d object(s) with primary key %s)" % (
+                            full_model_name(model), msg, len(objects),
+                            ', '.join([unicode(o.object.pk) for o in objects]))
+                    count += len(objects)
+
+            msg = "Abandoning with %d unsaved instances:%s" % (count, s)
+            logger.warning(msg)
+
+            # Don't raise an exception. The unsaved instances got lost and
+            # the loaddata should be done again, but meanwhile the database
+            # is not necessarily invalid and may be used for further testing.
+            # And anyway, loaddata would catch it and still continue.
+            # raise Exception(msg)
 
 
 class DpyDeserializer(LoaderBase):
@@ -656,39 +670,16 @@ See <https://code.djangoproject.com/ticket/18213>.
 
         #~ logger.info("Saved %d instances from %s.",self.saved,fp.name)
 
-        self.flush_deferred_objects()
-
-        if self.save_later:
-            count = 0
-            s = ''
-            for model, msg_objects in self.save_later.items():
-                for msg, objects in msg_objects.items():
-                    if False:  # detailed content of the first object
-                        s += "\n- %s %s (%d object(s), e.g. %s)" % (
-                            full_model_name(model), msg, len(objects),
-                            obj2str(objects[0].object, force_detailed=True))
-                    else:  # pk of all objects
-                        s += "\n- %s %s (%d object(s) with primary key %s)" % (
-                            full_model_name(model), msg, len(objects),
-                            ', '.join([unicode(o.object.pk) for o in objects]))
-                    count += len(objects)
-
-            msg = "Abandoning with %d unsaved instances from %s:%s" % (
-                count, module.__name__, s)
-            logger.warning(msg)
-            """
-            Don't raise an exception. The unsaved instances got lost and 
-            the loaddata should be done again, but meanwhile the database
-            is not necessarily invalid and may be used for further testing.
-            And anyway, loaddata would catch it and still continue.
-            """
-            #~ raise Exception(msg)
-
-        if hasattr(module, 'after_load'):  # deprecated
-            module.after_load()
+        self.finalize()
 
 
 class DpyLoader(LoaderBase):
+
+    def __init__(self, globals_dict):
+        site = globals_dict['settings'].SITE
+        site.startup()
+        site.install_migrations(globals_dict)
+        super(DpyLoader, self).__init__()
 
     def save(self, obj):
         for o in self.expand(obj):

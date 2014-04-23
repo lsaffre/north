@@ -206,20 +206,13 @@ def bv2kw(fieldname, values):
 
         self.stream.write("""
 
-AFTER_LOAD_HANDLERS = []  # populated by Migrator.after_load()
-
-def after_load(loader):
-    for h in AFTER_LOAD_HANDLERS:
-        h(loader)
-
 def main():
-    settings.SITE.startup()
-    settings.SITE.install_migrations(globals())
+    loader = DpyLoader(globals())
     from django.core.management import call_command
-    call_command('initdb', interactive=False)
-    loader = DpyLoader()
+    # call_command('initdb', interactive=False)
+    call_command('initdb')
     os.chdir(os.path.dirname(__file__))
-        
+
 """)
 
         for model in self.models:
@@ -252,12 +245,12 @@ def main():
             self.stream.write('    execfile("%s.py")\n' % model._meta.db_table)
 
         self.stream.write(
-            '    after_load(loader)\n')
-        self.stream.write(
-            '    logger.info("Loaded %d objects",loader.count_objects)\n')
+            '    loader.finalize()\n')
+        # self.stream.write(
+        #     '    logger.info("Loaded %d objects",loader.count_objects)\n')
         self.stream.write("""
 if __name__ == '__main__':
-    main()        
+    main()
 """)
         #~ self.stream.write('\nsettings.SITE.load_from_file(globals())\n')
         self.stream.close()
