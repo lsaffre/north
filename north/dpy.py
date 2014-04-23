@@ -570,6 +570,7 @@ class LoaderBase(object):
         self.flush_deferred_objects()
 
         for h in self.AFTER_LOAD_HANDLERS:
+            logger.info("Running after_load handler %s", h.__doc__)
             h(self)
     
         logger.info("Loaded %d objects", self.count_objects)
