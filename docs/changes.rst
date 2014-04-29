@@ -16,6 +16,23 @@ Version 0.1.4 (in development)
 - Adapted test suite to changes in atelier and djangosite.
   Added :mod:`north.demo.settings` to remove depüendency from Lino.
 
+- Dumps written by version before April 2014 need manual adapt before you can load them into a newer version::
+
+    def main():
+        loader = DpyLoader(globals())  # new
+        # settings.SITE.startup()
+        from django.core.management import call_command
+        call_command('initdb',interactive=False)
+        # settings.SITE.install_migrations(globals())
+        # loader = DpyLoader()
+        os.chdir(os.path.dirname(__file__))
+        ...
+        execfile(...)
+        ...
+        # logger.info("Loaded %d objects",loader.count_objects)
+        loader.finalize()  # new
+
+
 
 Version 0.1.3 (released :blogref:`20130505`)
 ============================================
