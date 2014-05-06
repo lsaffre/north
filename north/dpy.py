@@ -794,7 +794,8 @@ def load_fixture_from_module(m, **options):
     d = DpyDeserializer()
     for o in d.deserialize_module(m, **options):
         o.save()
-    if d.saved != 1:
-        raise Exception("Failed to load Python fixture from module %s" %
-                        m.__name__)
-    #~ return d
+    # if d.saved != 1:
+    #     logger.info("20140506 Loaded %d objects", d.saved)
+    #     raise Exception("Failed to load Python fixture from module %s" %
+    #                     m.__name__)
+    # return d
