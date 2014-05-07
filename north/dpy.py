@@ -604,9 +604,10 @@ class DpyLoader(LoaderBase):
 
     """
     def __init__(self, globals_dict):
+        self.globals_dict = globals_dict
         site = globals_dict['settings'].SITE
         site.startup()
-        site.install_migrations(self, globals_dict)
+        site.install_migrations(self)
         # alh = globals_dict.setdefault('AFTER_LOAD_HANDLERS', [])
         super(DpyLoader, self).__init__()
 
