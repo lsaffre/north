@@ -8,6 +8,9 @@ Here is a list of attributes and methods of a :ref:`north` `Site`
 instance which application developers should know.
 See also :ref:`djangosite.settings`.
 
+.. setting:: migration_class
+
+Used by :func:`north.dpy.install_migrations`.
 
 
 .. setting:: languages

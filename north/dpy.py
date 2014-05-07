@@ -15,7 +15,6 @@ from StringIO import StringIO
 import os
 import imp
 from decimal import Decimal
-#~ from types import GeneratorType
 
 
 from django.conf import settings
@@ -30,7 +29,6 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
-from django.utils.importlib import import_module
 from django.utils import translation
 
 from djangosite.dbutils import obj2str, sorted_models_list, full_model_name
@@ -105,7 +103,6 @@ def create_mti_child(parent_model, pk_, child_model, **kw):
 
 
 class Serializer(base.Serializer):
-
     """Serializes a QuerySet to a py stream.
 
     Usage: ``manage.py dumpdata --format py``
@@ -274,7 +271,7 @@ def bv2kw(fieldname,values):
             #~ self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)
             self.stream.write('    yield %s_objects()\n' %
                               model._meta.db_table)
-        self.stream.write('\nsettings.SITE.install_migrations(globals())\n')
+        # self.stream.write('\nsettings.SITE.install_migrations(globals())\n')
 
     def sort_models(self, unsorted):
         sorted = []
@@ -509,7 +506,8 @@ class LoaderBase(object):
         self.save_later = {}
         self.saved = 0
         self.count_objects = 0
-        self.AFTER_LOAD_HANDLERS = []  # populated by Migrator.after_load()
+        self.AFTER_LOAD_HANDLERS = []
+        # populated by Migrator.after_load(), but remains empty in a DpyDeserializer
 
     def flush_deferred_objects(self):
         """
@@ -520,13 +518,13 @@ class LoaderBase(object):
             for msg_objlist in self.save_later.values():
                 for objlist in msg_objlist.values():
                     try_again += objlist
-            logger.info("Trying again with %d unsaved instances.",
+            logger.info("Trying to save %d deferred objects.",
                         len(try_again))
             self.save_later = {}
             self.saved = 0
             for obj in try_again:
                 obj.try_save()  # ,*args,**kw):
-            logger.info("Saved %d instances.", self.saved)
+            logger.info("Saved %d objects.", self.saved)
 
     def expand(self, obj):
         if obj is None:
@@ -562,13 +560,18 @@ class LoaderBase(object):
         l.append(obj)
 
     def finalize(self):
-
+        """
+        """
         self.flush_deferred_objects()
+
+        logger.info(
+            "Finalize %d after_load handlers",
+            len(self.AFTER_LOAD_HANDLERS))
 
         for h in self.AFTER_LOAD_HANDLERS:
             logger.info("Running after_load handler %s", h.__doc__)
             h(self)
-    
+
         logger.info("Loaded %d objects", self.count_objects)
     
         if self.save_later:
@@ -596,10 +599,25 @@ class LoaderBase(object):
             # raise Exception(msg)
 
 
-class DpyDeserializer(LoaderBase):
+class DpyLoader(LoaderBase):
+    """Instantiated by `restore.py`.
 
     """
-    The deserializer for :ref:`dpy`.
+    def __init__(self, globals_dict):
+        site = globals_dict['settings'].SITE
+        site.startup()
+        site.install_migrations(self, globals_dict)
+        # alh = globals_dict.setdefault('AFTER_LOAD_HANDLERS', [])
+        super(DpyLoader, self).__init__()
+
+    def save(self, obj):
+        for o in self.expand(obj):
+            o.try_save()
+
+
+class DpyDeserializer(LoaderBase):
+    """The Django deserializer for :ref:`dpy`.
+
     """
 
     def deserialize(self, fp, **options):
@@ -661,26 +679,13 @@ class DpyDeserializer(LoaderBase):
                 else:
                     raise Exception("""\
 Fixture %s decided to not create any object.
-We're sorry, but Django doesn't like that. 
+We're sorry, but Django doesn't like that.
 See <https://code.djangoproject.com/ticket/18213>.
 """ % module.__name__)
 
         #~ logger.info("Saved %d instances from %s.",self.saved,fp.name)
 
         self.finalize()
-
-
-class DpyLoader(LoaderBase):
-
-    def __init__(self, globals_dict):
-        site = globals_dict['settings'].SITE
-        site.startup()
-        site.install_migrations(globals_dict)
-        super(DpyLoader, self).__init__()
-
-    def save(self, obj):
-        for o in self.expand(obj):
-            o.try_save()
 
 
 def Deserializer(fp, **options):
@@ -694,35 +699,40 @@ def Deserializer(fp, **options):
 
 class Migrator(object):
     """The SITE's Migrator class is instantiated by `install_migrations`.
-    Deserves documentation.
+
+    If :setting:`migration_class` is None (the default), then this
+    class will be instantiated. Applications may define their own
+    Migrator class which should be a subclasss of this.
 
     """
-    def __init__(self, site, globals_dict):
+    def __init__(self, site, loader):
         self.site = site
-        self.globals_dict = globals_dict
+        self.loader = loader
 
     def after_load(self, todo):
         """Declare a function to be called after all data has been loaded."""
         assert callable(todo)
-        al = self.globals_dict.setdefault('AFTER_LOAD_HANDLERS', [])
-        al.append(todo)
+        # al = self.globals_dict['AFTER_LOAD_HANDLERS']
+        self.loader.AFTER_LOAD_HANDLERS.append(todo)
 
 
-def install_migrations(self, globals_dict):
-    """Python dumps are generated with one line at the end which calls
-    this method, passing it their global namespace::
+def install_migrations(self, loader):
+    """Python dumps are generated with one line near the end of their
+    `restore.py` file which calls this method, passing it their global
+    namespace::
 
       settings.SITE.install_migrations(globals())
 
     A dumped fixture should always call this, even if there is no
-    version change and no migration, because this also does certain
-    other things:
+    version change and no data migration, because this also does
+    certain other things:
 
     - set :setting:`loading_from_dump` to `True`
     - remove any Permission and Site objects that might have been
       generated by `post_syncdb` signal if these apps are installed.
 
     """
+    globals_dict = loader.globals_dict
 
     self.loading_from_dump = True
 
@@ -744,13 +754,9 @@ def install_migrations(self, globals_dict):
                     current_version)
         return
 
-    # if self.migration_module:
-    #     mod = import_module(self.migration_module)
-    #     migrator = mod.Migrator(self)
-
     if self.migration_class is not None:
         mc = import_by_path(self.migration_class)
-        migrator = mc(self, globals_dict)
+        migrator = mc(self, loader)
     else:
         migrator = self
 
@@ -786,6 +792,7 @@ def install_migrations(self, globals_dict):
 def load_fixture_from_module(m, **options):
     """
     Used in unit tests to manually load a given fixture.
+    E.g. in Lino `/tutorials/tables/index`.
     """
     #~ filename = m.__file__[:-1]
     #~ print filename
@@ -794,6 +801,10 @@ def load_fixture_from_module(m, **options):
     d = DpyDeserializer()
     for o in d.deserialize_module(m, **options):
         o.save()
+
+    # 20140506 Don't remember why the following was. But it disturbed
+    # in Lino `/tutorials/tables/index`.
+
     # if d.saved != 1:
     #     logger.info("20140506 Loaded %d objects", d.saved)
     #     raise Exception("Failed to load Python fixture from module %s" %

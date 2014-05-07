@@ -1,4 +1,4 @@
-# Copyright 2013 by Luc Saffre.
+# Copyright 2013-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """
 This defines the :class:`Site` class.
@@ -46,10 +46,9 @@ class Site(Site):
 
     loading_from_dump = False
 
-    # settings
+    # see docs/settings.rst
     migration_class = None
     languages = None
-
     hidden_languages = None
 
     BABEL_LANGS = tuple()
