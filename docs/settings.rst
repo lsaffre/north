@@ -4,6 +4,8 @@
 Settings reference
 ====================================
 
+.. note:: This page is not maintained. Contents has been copied to Lino docs.
+
 Here is a list of attributes and methods of a :ref:`north` `Site`
 instance which application developers should know.
 See also :ref:`djangosite.settings`.
