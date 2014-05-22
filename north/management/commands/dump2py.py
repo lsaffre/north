@@ -212,6 +212,7 @@ def main():
     # call_command('initdb', interactive=False)
     call_command('initdb')
     os.chdir(os.path.dirname(__file__))
+    loader.initialize()
 
 """)
 

@@ -561,6 +561,8 @@ class LoaderBase(object):
         l.append(obj)
 
     def initialize(self):
+        """To be called after initdb and before starting to load the dumped
+data."""
         for h in self.before_load_handlers:
             logger.info("Running before_load handler %s", h.__doc__)
             h(self)
@@ -662,6 +664,8 @@ class DpyDeserializer(LoaderBase):
             #~ raise Exception("%s has no attribute 'objects'" % fp.name)
             raise Exception("Fixture %s has no attribute 'objects'" %
                             module.__name__)
+
+        self.initialize()
 
         empty_fixture = True
         for obj in module.objects():
