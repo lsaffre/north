@@ -508,6 +508,7 @@ class LoaderBase(object):
         self.count_objects = 0
         self.AFTER_LOAD_HANDLERS = []
         # populated by Migrator.after_load(), but remains empty in a DpyDeserializer
+        self.before_load_handlers = []
 
     def flush_deferred_objects(self):
         """
@@ -559,6 +560,11 @@ class LoaderBase(object):
             logger.info("Deferred %s : %s", obj2str(obj.object), msg)
         l.append(obj)
 
+    def initialize(self):
+        for h in self.before_load_handlers:
+            logger.info("Running before_load handler %s", h.__doc__)
+            h(self)
+
     def finalize(self):
         """
         """
@@ -609,7 +615,6 @@ class DpyLoader(LoaderBase):
         site = globals_dict['settings'].SITE
         site.startup()
         site.install_migrations(self)
-        # alh = globals_dict.setdefault('AFTER_LOAD_HANDLERS', [])
 
     def save(self, obj):
         for o in self.expand(obj):
@@ -715,6 +720,11 @@ class Migrator(object):
         assert callable(todo)
         # al = self.globals_dict['AFTER_LOAD_HANDLERS']
         self.loader.AFTER_LOAD_HANDLERS.append(todo)
+
+    def before_load(self, todo):
+        """Declare a function to be called before loading dumped data."""
+        assert callable(todo)
+        self.loader.before_load_handlers.append(todo)
 
 
 def install_migrations(self, loader):
