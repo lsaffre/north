@@ -62,20 +62,26 @@ class Cycler:
     >>> print c.pop(), c.pop(), c.pop()
     None None None
     
+    >>> c = Cycler(None)
+    >>> print c.pop(), c.pop(), c.pop()
+    None None None
     """
 
     def __init__(self, *args):
         """
         If there is exactly one argument, then this must be an iterable
         and will be used as the list of items to cycle on.
-        If there is more than one positional argument, then these 
+        If there is more than one positional argument, then these
         arguments themselves will be the list of items.
         """
 
         if len(args) == 0:
             self.items = []
         elif len(args) == 1:
-            self.items = list(args[0])
+            if args[0] is None:
+                self.items = []
+            else:
+                self.items = list(args[0])
         else:
             self.items = args
         self.current = 0
