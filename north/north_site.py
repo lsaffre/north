@@ -420,16 +420,6 @@ class Site(Site):
                 known_values[lng.name] = v
         return known_values
 
-    def unused_field2kw(self, obj, name):
-        """
-        """
-        d = {self.DEFAULT_LANGUAGE.name: getattr(obj, name)}
-        for lang in self.BABEL_LANGS:
-            v = getattr(obj, name + lang.suffix)
-            if v:
-                d[lang.name] = v
-        return d
-
     def field2args(self, obj, name):
         """
         Return a list of the babel values of this field in the order of
@@ -472,12 +462,12 @@ class Site(Site):
             return self.babelitem(**v)
 
     def babelattr(self, obj, attrname, default=NOT_PROVIDED, language=None):
-        """
-        Return the value of the specified babel field `attrname` of `obj`
+        """Return the value of the specified babel field `attrname` of `obj`
         in the current language.
         
-        This is to be used in multilingual document templates.
-        For example in a document template of a Contract you may use the following expression::
+        This is to be used in multilingual document templates.  For
+        example in a document template of a Contract you may use the
+        following expression::
 
           babelattr(self.type,'name')
 
@@ -503,22 +493,23 @@ class Site(Site):
         ...     site.babelattr(obj,'name')
         'Hello'
         
-        If the object has no translation for a given language, 
-        return the site's default language.
-        Two possible cases:
-        The language exists on the site, but the object has no translation for it:
+        If the object has no translation for a given language, return
+        the site's default language.  Two possible cases:
+
+        The language exists on the site, but the object has no
+        translation for it:
         
         >>> site,obj = testit('en es')
         >>> with translation.override('es'):
-        ...     site.babelattr(obj,'name')
+        ...     site.babelattr(obj, 'name')
         'Hello'
         
         Or a language has been activated which doesn't exist on the site:
        
         >>> with translation.override('fr'):
-        ...     site.babelattr(obj,'name')
+        ...     site.babelattr(obj, 'name')
         'Hello'
-        
+
         """
         if language is None:
             from django.utils import translation
@@ -541,17 +532,16 @@ class Site(Site):
 
 class TestSite(Site):
 
-    """
-    Used to simplify doctest strings because it inserts default 
-    values for the two first arguments that are mandatory but 
-    not used in our examples::
+    """Used to simplify doctest strings because it inserts default values
+    for the two first arguments that are mandatory but not used in our
+    examples::
     
     >> from north import Site
-    >> Site(__file__,{},...)
+    >> Site(globals(), ...)
     
     >> from north import TestSite as Site
     >> Site(...)
-    
+
     """
 
     def __init__(self, *args, **kwargs):
