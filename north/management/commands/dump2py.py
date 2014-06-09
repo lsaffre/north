@@ -224,17 +224,20 @@ def main():
             stream.write('# -*- coding: UTF-8 -*-\n')
             qs = model.objects.all()
             stream.write(
-                'logger.info("loading %d objects to table %s...")\n' % (
+                'logger.info("Loading %d objects to table %s...")\n' % (
                     qs.count(), model._meta.db_table))
+            fields = [
+                f for f, m in model._meta.get_fields_with_model()
+                if m is None]
+            fields = [
+                f for f in fields
+                if not getattr(f, '_lino_babel_field', False)]
+            stream.write(
+                "# fields: %s\n" % ', '.join(
+                    [f.name for f in fields]))
             for obj in qs:
                 self.count_objects += 1
                 #~ used_models.add(model)
-                fields = [
-                    f for f, m in model._meta.get_fields_with_model()
-                    if m is None]
-                fields = [
-                    f for f in fields 
-                    if not getattr(f, '_lino_babel_field', False)]
                 stream.write('loader.save(create_%s(%s))\n' % (
                     obj._meta.db_table,
                     ','.join([self.value2string(obj, f) for f in fields])))
@@ -356,8 +359,8 @@ if __name__ == '__main__':
         self.count_objects = 0
         if os.path.exists(self.output_dir):
             raise CommandError(
-                "Specified output_dir %s already exists. \
-                Delete it yourself if you dare!" % self.output_dir)
+                "Specified output_dir %s already exists. "
+                "Delete it yourself if you dare!" % self.output_dir)
 
         os.makedirs(self.output_dir)
 
