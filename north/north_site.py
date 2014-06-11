@@ -345,17 +345,24 @@ class Site(Site):
         """
         return self.DEFAULT_LANGUAGE.django_code
 
+    def str2kw(self, txt, name, **kw):
+        from django.utils import translation
+        for simple, info in self.language_dict.items():
+            with translation.override(simple):
+                kw[name + info.suffix] = unicode(txt)
+        return kw
+
     def babelkw(self, name, **kw):
         """
-        Return a dict with appropriate resolved field names for a 
-        BabelField `name` and a set of hard-coded values. 
-        
+        Return a dict with appropriate resolved field names for a
+        BabelField `name` and a set of hard-coded values.
+
         You have some hard-coded multilingual content in a fixture:
-        
+
         >>> from north import TestSite as Site
         >>> kw = dict(de="Hallo",en="Hello",fr="Salut")
-        
-        The field names where this info gets stored depends on the 
+
+        The field names where this info gets stored depends on the
         Site's `languages` distribution.
         
         >>> Site(languages="de-be en").babelkw('name',**kw)
@@ -381,24 +388,11 @@ class Site(Site):
         
         
         """
-        #~ d = { name : kw.get(default_language())}
         d = dict()
-        #~ v = kw.get(self.DEFAULT_LANGUAGE)
-        #~ if v is not None:
-            #~ d[name] = v
         for simple, info in self.language_dict.items():
-            # info = LanguageInfo()
             v = kw.get(simple, None)
             if v is not None:
                 d[name + info.suffix] = v
-                #~ if info.index == 0:
-                    #~ d[name] = v
-                #~ else:
-                    #~ d[name+'_'+info.name] = v
-        #~ for lang in self.BABEL_LANGS:
-            #~ v = kw.get(lang,None)
-            #~ if v is not None:
-                #~ d[name+'_'+lang] = v
         return d
 
     def args2kw(self, name, *args):

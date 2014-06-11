@@ -660,18 +660,19 @@ class DpyDeserializer(LoaderBase):
 
     def deserialize_module(self, module, **options):
 
-        if not hasattr(module, 'objects'):
-            #~ raise Exception("%s has no attribute 'objects'" % fp.name)
-            raise Exception("Fixture %s has no attribute 'objects'" %
-                            module.__name__)
-
         self.initialize()
 
         empty_fixture = True
-        for obj in module.objects():
-            for o in self.expand(obj):
-                empty_fixture = False
-                yield o
+        objects = getattr(module, 'objects', None)
+        if objects is None:
+            logger.info("Fixture %s has no attribute 'objects'" %
+                        module.__name__)
+        else:
+
+            for obj in objects():
+                for o in self.expand(obj):
+                    empty_fixture = False
+                    yield o
 
         if empty_fixture:
             if SUPPORT_EMPTY_FIXTURES:
