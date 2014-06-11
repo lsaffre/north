@@ -145,8 +145,6 @@ def lookup_filter(fieldname, value, **kw):
     del kw[fieldname + LOOKUP_OP]
     for lng in settings.SITE.BABEL_LANGS:
         kw[fieldname + lng.suffix + LOOKUP_OP] = value
-        #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
-        #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})
         flt = flt | models.Q(**kw)
         del kw[fieldname + lng.suffix + LOOKUP_OP]
     return flt
