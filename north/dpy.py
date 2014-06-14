@@ -45,7 +45,7 @@ def create_mti_child(parent_model, pk_, child_model, **kw):
     The return value is an "almost normal" model instance,
     whose `save` and `full_clean` methods have been hacked.
     They are the only methods that will be
-    called by :class:`north.dumppy.Deserializer`.
+    called by :class:`north.dpy.Deserializer`.
     You should not use this instance for anything else
     and throw it away when the save() has been called.
 
