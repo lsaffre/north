@@ -345,7 +345,7 @@ class Site(Site):
         """
         return self.DEFAULT_LANGUAGE.django_code
 
-    def str2kw(self, txt, name, **kw):
+    def str2kw(self, name, txt,  **kw):
         from django.utils import translation
         for simple, info in self.language_dict.items():
             with translation.override(simple):

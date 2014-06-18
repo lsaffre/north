@@ -572,9 +572,10 @@ data."""
         """
         self.flush_deferred_objects()
 
-        logger.info(
-            "Finalize %d after_load handlers",
-            len(self.AFTER_LOAD_HANDLERS))
+        if len(self.AFTER_LOAD_HANDLERS):
+            logger.info(
+                "Finalize %d after_load handlers",
+                len(self.AFTER_LOAD_HANDLERS))
 
         for h in self.AFTER_LOAD_HANDLERS:
             logger.info("Running after_load handler %s", h.__doc__)
