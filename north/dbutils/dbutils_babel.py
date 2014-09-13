@@ -110,12 +110,11 @@ class LanguageField(models.CharField):
 
 
 def run_with_language(lang, func):
-    """
-    Selects the specified language `lang`, 
-    calls the specified functon `func`,
-    restores the previously selected language.
+    """Selects the specified language `lang`, calls the specified
+    function `func`, restores the previously selected language.
     
     Deprecated: use translation.override() instead of this.
+
     """
     with translation.override(lang):
         return func()

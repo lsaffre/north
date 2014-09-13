@@ -264,37 +264,28 @@ class Site(Site):
                            if x[0] in self.LANGUAGE_DICT])
 
     def get_language_info(self, code):
-        """
-        Use this in Python fixtures or tests to test whether a 
+        """Use this in Python fixtures or tests to test whether a 
         Site instance supports a given language. 
         `code` must be a Django-style language code
         If that specified language
         
-        On a site with only one locale of a language (and optionally 
-        some other languages), you can use only the language code to 
+        On a site with only one locale of a language (and optionally
+        some other languages), you can use only the language code to
         get a tuple of `(django_code, babel_locale)`:
         
         >>> from north import TestSite as Site
         >>> Site(languages="en-us fr de-be de").get_language_info('en')
         LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix='')
         
-        
-        On a site with two locales of a same language (e.g. 'en-us' and 'en-gb'), 
-        the simple code 'en' yields that first variant:
+        On a site with two locales of a same language (e.g. 'en-us'
+        and 'en-gb'), the simple code 'en' yields that first variant:
         
         >>> site = Site(languages="en-us en-gb")
         >>> print site.get_language_info('en')
         LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix='')
-        
+
         """
         return self.language_dict.get(code, None)
-
-    #~ def default_language(self):
-        #~ """
-        #~ Returns the default language of this website
-        #~ as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
-        #~ """
-        #~ return self.DEFAULT_LANGUAGE
 
     def resolve_languages(self, languages):
         """
@@ -456,55 +447,6 @@ class Site(Site):
             return self.babelitem(**v)
 
     def babelattr(self, obj, attrname, default=NOT_PROVIDED, language=None):
-        """Return the value of the specified babel field `attrname` of `obj`
-        in the current language.
-        
-        This is to be used in multilingual document templates.  For
-        example in a document template of a Contract you may use the
-        following expression::
-
-          babelattr(self.type,'name')
-
-        This will return the correct value for the current language.
-        
-        Examples:
-        
-        >>> from django.utils import translation
-        >>> from north import TestSite as Site
-        >>> from atelier.utils import AttrDict
-        >>> def testit(site_languages):
-        ...     site = Site(languages=site_languages)
-        ...     obj = AttrDict(site.babelkw('name',de="Hallo",en="Hello",fr="Salut"))
-        ...     return site,obj
-        
-        
-        >>> site,obj = testit('de en')
-        >>> with translation.override('de'):
-        ...     site.babelattr(obj,'name')
-        'Hallo'
-        
-        >>> with translation.override('en'):
-        ...     site.babelattr(obj,'name')
-        'Hello'
-        
-        If the object has no translation for a given language, return
-        the site's default language.  Two possible cases:
-
-        The language exists on the site, but the object has no
-        translation for it:
-        
-        >>> site,obj = testit('en es')
-        >>> with translation.override('es'):
-        ...     site.babelattr(obj, 'name')
-        'Hello'
-        
-        Or a language has been activated which doesn't exist on the site:
-       
-        >>> with translation.override('fr'):
-        ...     site.babelattr(obj, 'name')
-        'Hello'
-
-        """
         if language is None:
             from django.utils import translation
             language = translation.get_language()
@@ -543,4 +485,9 @@ class TestSite(Site):
         g = dict(__file__=__file__)
         g.update(SECRET_KEY="20227")  # see :djangoticket:`20227`
         super(TestSite, self).__init__(g, *args, **kwargs)
+
+        # 20140913 Hack needed for doctests in :mod:`ad`.
+        from django.utils import translation
+        translation._default = None
+
 

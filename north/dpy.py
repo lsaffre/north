@@ -680,14 +680,16 @@ class DpyDeserializer(LoaderBase):
                 # avoid Django interpreting empty fixtures as an error
                 yield DummyDeserializedObject()
             else:
-                """
-                To avoid Django interpreting empty fixtures as an error,
-                we yield one object which always exists: the SiteConfig instance
-                Oops, that will fail in lino_welfare if the company pointed to by
-                SiteConfig.job_office had been deferred.
-                """
+                # To avoid Django interpreting empty fixtures as an
+                # error, we yield one object which always exists: the
+                # SiteConfig instance.
+
+                # Oops, that will fail in lino_welfare if the company
+                # pointed to by SiteConfig.job_office had been
+                # deferred.
                 if settings.SITE.site_config:
-                    yield FakeDeserializedObject(self, settings.SITE.site_config)
+                    yield FakeDeserializedObject(
+                        self, settings.SITE.site_config)
                 else:
                     raise Exception("""\
 Fixture %s decided to not create any object.

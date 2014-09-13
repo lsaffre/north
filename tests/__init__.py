@@ -18,9 +18,6 @@ class BasicTests(BaseTestCase):
     def test_z01(self):
         self.assertEqual(1+1, 2)
 
-    def test_settings(self):
-        self.run_simple_doctests('docs/settings.rst')
-
     def test_site(self):
         self.run_simple_doctests('north/north_site.py')
 
