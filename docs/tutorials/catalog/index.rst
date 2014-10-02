@@ -18,7 +18,7 @@ Let's create a little Site with the following
   
 
 The :xfile:`settings.py` file is where you specify the 
-:attr:`languages <north.Site.languages>` 
+:attr:`languages <ad.Site.languages>` 
 setting of a given Site instance:
 
 .. literalinclude:: settings.py
@@ -31,18 +31,18 @@ Now we install some demo data. Here is a :ref:`Python fixture <dpy>`:
 
 .. literalinclude:: fixtures/demo.py
 
-Note how the application developer doesn't know which 
-:attr:`languages <north.Site.languages>` setting at runtime.
+Note how the application developer doesn't know which :attr:`languages
+<ad.Site.languages>` will be set at runtime.
 
-Of course the fixture above supposes a single person who knows 
-all the languages, but that's just because we are simplifying. 
-In reality you can do it as sophisticated as you want, 
-reading the content from different sources.
+Of course the fixture above supposes a single person who knows all the
+languages, but that's just because we are simplifying.  In reality you
+can do it as sophisticated as you want, reading the content from
+different sources.
 
 Here is how to install this data:
 
 >>> from django.core.management import call_command
->>> call_command('initdb','demo',interactive=False)
+>>> call_command('initdb', 'demo', interactive=False)
 Creating tables ...
 Creating table catalog_product
 Installing custom SQL ...

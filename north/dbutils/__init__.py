@@ -62,18 +62,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangosite import AFTER17
 from djangosite.dbutils import monthname
-#~ from djangosite.dbutils import set_language
 from djangosite.dbutils import dtomy  # obsolete. use fdmy instead
 from djangosite.dbutils import fdmy
 
-from north.dbutils.dbutils_babel import BabelCharField, BabelTextField, BabelNamed
-from north.dbutils.dbutils_babel import LanguageField
 from north.dbutils.dbutils_babel import run_with_language
-from north.dbutils.dbutils_babel import lookup_filter
-from north.dbutils.dbutils_babel import contribute_to_class
-from north.dbutils.dbutils_babel import LANGUAGE_CODE_MAX_LENGTH
 
 from north.utils import to_locale
+
 
 def babelkw(*args, **kw):
     return settings.SITE.babelkw(*args, **kw)
@@ -168,43 +163,11 @@ def resolve_model(model_spec, app_label=None, strict=False):
     return model
 
 
-def old_resolve_model(model_spec, app_label=None, strict=False):
-    """
-    doesn't work for contacts.Company because the model is defined somewhere else.
-    """
-    models.get_apps()  # trigger django.db.models.loading.cache._populate()
-    if isinstance(model_spec, basestring):
-        if '.' in model_spec:
-            app_label, model_name = model_spec.split(".")
-        else:
-            model_name = model_spec
-        app = resolve_app(app_label)
-        model = getattr(app, model_name, None)
-    else:
-        model = model_spec
-    if not isinstance(model, type) or not issubclass(model, models.Model):
-        if strict:
-            raise Exception(
-                "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
-                    model_spec, app_label, model, settings.SETTINGS_MODULE))
-        return UnresolvedModel(model_spec, app_label)
-    return model
-
-
 def format_date(d, format='medium'):
     if not d:
         return ''
     return babel_format_date(d, format=format,
                              locale=to_locale(translation.get_language()))
-
-#~ def dtos(d):
-    #~ return format_date(d, format='short')
-
-#~ def dtosm(d):
-    #~ return format_date(d,format='medium')
-
-#~ def dtosl(d):
-    #~ return format_date(d, format='full')
 
 
 def fdf(d):
