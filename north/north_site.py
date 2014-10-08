@@ -37,7 +37,7 @@ class Site(Site):
 
     is_local_project_dir = False
     """
-    This is automatically set when a :class:`Lino` is instantiated. 
+    This is automatically set when a :class:`Site` is instantiated. 
     Don't override it.
     Contains `True` if this is a "local" project.
     For local projects, Lino checks for local fixtures and config directories
