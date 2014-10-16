@@ -57,7 +57,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 
 from djangosite.dbutils import sorted_models_list, full_model_name
-from north import dbutils
+
+from lino.core.fields import BabelCharField, BabelTextField
 
 
 class Command(BaseCommand):
@@ -180,7 +181,7 @@ def bv2kw(fieldname, values):
                 for f in fields:
                     if getattr(f, '_lino_babel_field', False):
                         continue
-                    elif isinstance(f, (dbutils.BabelCharField, dbutils.BabelTextField)):
+                    elif isinstance(f, (BabelCharField, BabelTextField)):
                         self.stream.write(
                             '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
                                 f.attname, f.attname, f.attname))
@@ -318,7 +319,7 @@ if __name__ == '__main__':
         return sorted
 
     def value2string(self, obj, field):
-        if isinstance(field, (dbutils.BabelCharField, dbutils.BabelTextField)):
+        if isinstance(field, (BabelCharField, BabelTextField)):
             #~ return repr([repr(x) for x in dbutils.field2args(obj,field.name)])
             return repr(settings.SITE.field2args(obj, field.name))
         value = field._get_val_from_obj(obj)
