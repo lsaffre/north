@@ -11,7 +11,7 @@ execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
 
 __version__ = SETUP_INFO['version']
 
-intersphinx_url = "http://north.lino-framework.org"
+intersphinx_urls = dict(docs="http://north.lino-framework.org")
 
 from .north_site import Site, TestSite
 #~ from site import TestSite, LanguageInfo
