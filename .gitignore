@@ -13,3 +13,4 @@ tmp
 test.db
 *~
 .DS_Store
+.idea
